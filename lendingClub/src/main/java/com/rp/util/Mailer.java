@@ -59,7 +59,7 @@ public class Mailer {
 
         Transport transport = mailSession.getTransport();
 
-        MimeMessage message = new MimeMessage(mailSession);
+        MimeMessage  message = new MimeMessage(mailSession);
 
         message.setSubject(subject);
         message.setFrom(new InternetAddress(username_));
