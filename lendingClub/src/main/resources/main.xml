@@ -1,0 +1,13 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <bean class="com.rp.p2p.loan_selector.FilteredLoanSelector">
+        <property name="validValues">
+            <set>
+                <value>RENT</value>
+                <value>RENT</value>
+            </set>
+        </property>
+    </bean>
+</beans>

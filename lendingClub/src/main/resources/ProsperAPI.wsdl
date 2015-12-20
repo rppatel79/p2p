@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:tns="https://services.prosper.com/ProsperAPI/"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  targetNamespace="https://services.prosper.com/ProsperAPI/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+        <s:schema elementFormDefault="qualified"
+                  targetNamespace="https://services.prosper.com/ProsperAPI/">
+            <s:element name="Bid">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="authenticationToken"
+                                   type="s:string"/>
+                        <s:element minOccurs="1" maxOccurs="1" name="listingNumber" type="s:int"/>
+                        <s:element minOccurs="1" maxOccurs="1" name="amount" type="s:decimal"/>
+                        <s:element minOccurs="1" maxOccurs="1" name="minRate" type="s:decimal"/>
+                        <s:element minOccurs="1" maxOccurs="1" name="placeBid" type="s:boolean"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="BidResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="BidResult"
+                                   type="tns:DefinitionResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="DefinitionResult">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="Success" type="s:boolean"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Definition"
+                               type="tns:Definition"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="Definition">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="Object" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Version" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Fields" type="tns:ArrayOfField"
+                            />
+
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfField">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="unbounded" name="Field" nillable="true"
+                               type="tns:Field"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="Field">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Label" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Type" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string"/>
+                    <s:element minOccurs="1" maxOccurs="1" name="IsSearchable" type="s:boolean"
+                            />
+                    <s:element minOccurs="1" maxOccurs="1" name="Authenticated"
+                               type="s:boolean"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="Describe">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="authenticationToken"
+                                   type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="objectType" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="DescribeResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="DescribeResult"
+                                   type="tns:DefinitionResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Login">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="LoginResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="LoginResult"
+                                   type="tns:DefinitionResult"/>
+                    </s:sequence>
+
+
+                </s:complexType>
+            </s:element>
+            <s:element name="Logout">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="LogoutResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="LogoutResult"
+                                   type="tns:DefinitionResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Query">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="authenticationToken"
+                                   type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="objectType" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="fields" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="conditionExpression"
+                                   type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="QueryResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="QueryResult"
+                                   type="tns:ProsperObjectResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="ProsperObjectResult">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="Success" type="s:boolean"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="ProsperObjects"
+                               type="tns:ArrayOfProsperObject"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="ArrayOfProsperObject">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="unbounded" name="ProsperObject"
+                               nillable="true" type="tns:ProsperObject"/>
+                </s:sequence>
+            </s:complexType>
+
+
+            <s:complexType name="ProsperObject" abstract="true"/>
+            <s:complexType name="Listing">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="1" maxOccurs="1" name="AmountDelinquent"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="AmountFunded" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="AmountRemaining"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="AmountRequested"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BankcardUtilization"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BidCount" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BidMaximumRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BorrowerAPR" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BorrowerMaximumRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BorrowerRate" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="BorrowerState" type="s:string"
+                                    />
+                            <s:element minOccurs="1" maxOccurs="1" name="Category" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreditGrade" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CurrentCreditLines"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="DebtToIncomeRatio"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="DelinquenciesLast7Years"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Duration" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="EmploymentStatus"
+                                       type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="EmploymentStatusDuration"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="EndDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="FirstRecordedCreditLine"
+                                       nillable="true" type="s:dateTime"/>
+
+
+                            <s:element minOccurs="1" maxOccurs="1" name="FundingOption" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="GroupKey" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="GroupLeaderRewardRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="IncomeRange" type="s:string"
+                                    />
+                            <s:element minOccurs="1" maxOccurs="1" name="InquiriesLast6Months"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="IsBankAccountVerified"
+                                       nillable="true" type="s:boolean"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="IsBorrowerHomeowner"
+                                       nillable="true" type="s:boolean"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LastModifiedDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ListingNumber" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="MemberKey" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="NowDelinquent" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Occupation" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="OpenCreditLines" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PercentFunded" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="PrimaryImageURL"
+                                       type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PublicRecordsLast10Years"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PublicRecordsLast12Months"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="RevolvingCreditBalance"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROIInterestAndFeesRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROINetDefaultRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROIObservationDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROIOriginationEnd"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROIOriginationStart"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ROIServicingFeeRate"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="StartDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Status" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string"/>
+
+
+                            <s:element minOccurs="1" maxOccurs="1" name="TotalCreditLines" nillable="true"
+                                       type="s:int"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Group">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="1" maxOccurs="1" name="ApprovalDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1"
+                                       name="GroupLeaderRewardPercentageOfBase" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="GroupRating" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="IsAcceptingNewMembers"
+                                       nillable="true" type="s:boolean"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LastModifiedDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ListingReviewRequirement"
+                                       nillable="true" type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="MemberKey" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="ShortDescription"
+                                       type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="ShortName" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Status" nillable="true"
+                                       type="s:int"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Marketplace">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="0" maxOccurs="1" name="FeaturedListings"
+                                       type="tns:ArrayOfProsperObject"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="HistoricalInterestRatesTable"
+                                       type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LoanVolumeToDate"
+                                       nillable="true" type="s:decimal"/>
+
+                            <s:element minOccurs="1" maxOccurs="1" name="MembersToDate" nillable="true"
+                                       type="s:int"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="LenderLoan">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="0" maxOccurs="1" name="BidSource" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="DPD" nillable="true" type="s:int"
+                                    />
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LoanNumber" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PrincipalBalance" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PrincipalLoaned" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="PrincipalRepaid" nillable="true"
+                                       type="s:decimal"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <!--
+            <s:complexType name="Bid">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="1" maxOccurs="1" name="Amount" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LastModifiedDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="ListingKey" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="MemberKey" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="MinimumRate" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ParticipationAmount"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Status" nillable="true"
+                                       type="s:int"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            -->
+            <s:complexType name="Loan">
+                <s:complexContent mixed="false">
+
+
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="1" maxOccurs="1" name="AgeInMonths" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="AmountBorrowed"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="BorrowerRate" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="CreditGrade" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="DebtToIncomeRatio"
+                                       nillable="true" type="s:decimal"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="GroupKey" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LastModifiedDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LenderRate" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="ListingKey" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LoanOutcome" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="MonthsPastDue" nillable="true"
+                                       type="s:decimal"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="OriginationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="ServicingStatus" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Term" nillable="true"
+                                       type="s:int"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="Member">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:ProsperObject">
+                        <s:sequence>
+                            <s:element minOccurs="1" maxOccurs="1" name="CreationDate" nillable="true"
+                                       type="s:dateTime"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="GroupKey" type="s:string"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="LastModifiedDate"
+                                       nillable="true" type="s:dateTime"/>
+                            <s:element minOccurs="1" maxOccurs="1" name="Roles" nillable="true"
+                                       type="s:int"/>
+                            <s:element minOccurs="0" maxOccurs="1" name="ScreenName" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:element name="Retrieve">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="authenticationToken"
+                                   type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="objectType" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="fields" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="keys" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="RetrieveResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="RetrieveResult"
+                                   type="tns:ProsperObjectResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="BidSoapIn">
+        <wsdl:part name="parameters" element="tns:Bid"/>
+    </wsdl:message>
+    <wsdl:message name="BidSoapOut">
+        <wsdl:part name="parameters" element="tns:BidResponse"/>
+    </wsdl:message>
+    <wsdl:message name="DescribeSoapIn">
+        <wsdl:part name="parameters" element="tns:Describe"/>
+    </wsdl:message>
+    <wsdl:message name="DescribeSoapOut">
+        <wsdl:part name="parameters" element="tns:DescribeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="LoginSoapIn">
+        <wsdl:part name="parameters" element="tns:Login"/>
+    </wsdl:message>
+    <wsdl:message name="LoginSoapOut">
+        <wsdl:part name="parameters" element="tns:LoginResponse"/>
+    </wsdl:message>
+    <wsdl:message name="LogoutSoapIn">
+        <wsdl:part name="parameters" element="tns:Logout"/>
+    </wsdl:message>
+    <wsdl:message name="LogoutSoapOut">
+        <wsdl:part name="parameters" element="tns:LogoutResponse"/>
+    </wsdl:message>
+    <wsdl:message name="QuerySoapIn">
+        <wsdl:part name="parameters" element="tns:Query"/>
+    </wsdl:message>
+    <wsdl:message name="QuerySoapOut">
+        <wsdl:part name="parameters" element="tns:QueryResponse"/>
+
+
+    </wsdl:message>
+    <wsdl:message name="RetrieveSoapIn">
+        <wsdl:part name="parameters" element="tns:Retrieve"/>
+    </wsdl:message>
+    <wsdl:message name="RetrieveSoapOut">
+        <wsdl:part name="parameters" element="tns:RetrieveResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="ProsperAPISoap">
+        <wsdl:operation name="Bid">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Validate
+                parameters and then place a Bid.
+            </wsdl:documentation>
+            <wsdl:input message="tns:BidSoapIn"/>
+            <wsdl:output message="tns:BidSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Describe">
+            <wsdl:documentation
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Provides the definition
+                details for the given object.
+            </wsdl:documentation>
+            <wsdl:input message="tns:DescribeSoapIn"/>
+            <wsdl:output message="tns:DescribeSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Login">
+            <wsdl:documentation
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Authenticates User for
+                Extended Data.
+            </wsdl:documentation>
+            <wsdl:input message="tns:LoginSoapIn"/>
+            <wsdl:output message="tns:LoginSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Logout">
+            <wsdl:documentation
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Correctly Logs
+                Off.
+            </wsdl:documentation>
+            <wsdl:input message="tns:LogoutSoapIn"/>
+            <wsdl:output message="tns:LogoutSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Query">
+            <wsdl:documentation
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Provides the requested
+                fields for all the objects of the given type that match the conditional
+                expression.
+            </wsdl:documentation>
+            <wsdl:input message="tns:QuerySoapIn"/>
+            <wsdl:output message="tns:QuerySoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Retrieve">
+            <wsdl:documentation
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Provides the requested
+                fields for all the objects of the given type for the given
+                Keys.
+            </wsdl:documentation>
+            <wsdl:input message="tns:RetrieveSoapIn"/>
+            <wsdl:output message="tns:RetrieveSoapOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ProsperAPISoap" type="tns:ProsperAPISoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Bid">
+            <soap:operation soapAction="https://services.prosper.com/ProsperAPI/Bid"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Describe">
+            <soap:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Describe"
+                    style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Login">
+            <soap:operation soapAction="https://services.prosper.com/ProsperAPI/Login"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Logout">
+            <soap:operation soapAction="https://services.prosper.com/ProsperAPI/Logout"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Query">
+            <soap:operation soapAction="https://services.prosper.com/ProsperAPI/Query"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+
+
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Retrieve">
+            <soap:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Retrieve"
+                    style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <!--
+    <wsdl:binding name="ProsperAPISoap12" type="tns:ProsperAPISoap">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Bid">
+            <soap12:operation soapAction="https://services.prosper.com/ProsperAPI/Bid"
+                              style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Describe">
+            <soap12:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Describe"
+                    style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Login">
+            <soap12:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Login"
+                    style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Logout">
+
+
+            <soap12:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Logout"
+                    style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Query">
+            <soap12:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Query"
+                    style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Retrieve">
+            <soap12:operation
+                    soapAction="https://services.prosper.com/ProsperAPI/Retrieve"
+                    style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    -->
+    <wsdl:service name="ProsperAPI">
+        <wsdl:port name="ProsperAPISoap" binding="tns:ProsperAPISoap">
+            <soap:address location="https://services.prosper.com/ProsperAPI.asmx"/>
+        </wsdl:port>
+        <!--
+        <wsdl:port name="ProsperAPISoap12" binding="tns:ProsperAPISoap12">
+            <soap12:address location="https://services.prosper.com/ProsperAPI.asmx"/>
+        </wsdl:port>
+        -->
+    </wsdl:service>
+</wsdl:definitions>
