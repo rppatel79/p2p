@@ -5,18 +5,20 @@ import com.codesnippets4all.json.parsers.JsonParserFactory;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
+import com.rp.util.db.HibernateUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class LendingClubApi implements OriginatorApi
@@ -153,6 +155,35 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
+    @Override
+    public BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception {
+        BrowseLoansResult browseLoansResult = getBrowseLoansResult(allLoans);
+
+        SessionFactory sessionFactory = null;
+        Session session =null;
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory("P2P");
+            session = sessionFactory.openSession();
+            for (LoanListing loanListing : browseLoansResult.getLoans()) {
+                session.merge(loanListing);
+            }
+            session.flush();
+        }
+        catch(Exception ex)
+        {
+            logger_.warn("Unable to save loan.  Continuing without failing",ex);
+        }
+        finally
+        {
+            if (session != null )
+                session.close();
+            if (sessionFactory != null && !sessionFactory.isClosed())
+                sessionFactory.close();
+        }
+
+        return browseLoansResult;
+    }
+
     private Collection<OwnedNote> convertNotesOwned(List<Map<String, String>> allNotesOwned) throws ParseException {
         Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
         for (Map<String,String>  noteOwned : allNotesOwned)
@@ -214,7 +245,7 @@ public class LendingClubApi implements OriginatorApi
 
 
             loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus")));
-            loan.setDesc(loans.get("desc"));
+            loan.setDescription(loans.get("description"));
             loan.setPurpose(LoanPurpose.fromValue(loans.get("purpose").toUpperCase()));
             //loan.setAddrZip(loans.get("addrZip"));
             loan.setAddrState(loans.get("addrState"));

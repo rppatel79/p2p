@@ -64,7 +64,7 @@ public class Main
 
             List<LoanListing> toOrder;
             if (SourceType.filterSource == sourceType) {
-                BrowseLoansResult browseLoansResult = originatorApi.getBrowseLoansResult(false);
+                BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
                 FilteredLoanSelector filteredLoanSelector = new FilteredLoanSelector();
                 toOrder = filteredLoanSelector.select(browseLoansResult.getLoans());
             } else {

@@ -5,12 +5,15 @@ import com.codesnippets4all.json.parsers.JsonParserFactory;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
+import com.rp.util.db.HibernateUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,9 +42,6 @@ public class ProsperApi implements OriginatorApi
         prosperUsr_ = ApplicationProperties.getInstance().getProperty("PROSPER_USR");
         prosperPasswd_ = ApplicationProperties.getInstance().getProperty("PROSPER_PASSWD");
     }
-
-
-
 
     @Override
     public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders)
@@ -119,6 +119,25 @@ public class ProsperApi implements OriginatorApi
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception {
+        BrowseLoansResult browseLoansResult = getBrowseLoansResult(allLoans);
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory("P2P");
+        try {
+            Session session = sessionFactory.openSession();
+            for (LoanListing loanListing : browseLoansResult.getLoans()) {
+                session.saveOrUpdate(loanListing);
+            }
+        }
+        catch(Exception ex)
+        {
+            logger_.warn("Unable to save loan.  Continuing without failing",ex);
+        }
+
+        return browseLoansResult;
     }
 
     private static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
@@ -227,7 +246,7 @@ public class ProsperApi implements OriginatorApi
             //reviewStatusD;
             loan.setReviewStatus("Active".equals(loans.get("ListingStatusDescription"))?ReviewStatus.APPROVED:ReviewStatus.NOT_APPROVED);
             //url;
-            loan.setDesc((String)loans.get("ListingStatusDescription"));
+            loan.setDescription((String)loans.get("ListingStatusDescription"));
             //purpose;
             loan.setTitle((String)loans.get("ListingTitle"));
             loan.setAddrCity((String)loans.get("BorrowerCity"));
@@ -239,7 +258,7 @@ public class ProsperApi implements OriginatorApi
 
 /*
             loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus")));
-            loan.setDesc(loans.get("desc"));
+            loan.setDescription(loans.get("description"));
             loan.setPurpose(LoanPurpose.fromValue(loans.get("purpose").toUpperCase()));
             //loan.setAddrZip(loans.get("addrZip"));
             loan.setAddrState(loans.get("addrState"));
@@ -344,7 +363,7 @@ public class ProsperApi implements OriginatorApi
                 Map mapPortfolio = portfoliosList.get(i);
                 long id = Long.parseLong((String) mapPortfolio.get("portfolioId"));
                 String name = (String) mapPortfolio.get("portfolioName");
-                String desc = (String) mapPortfolio.get("portfolioDescription");
+                String description = (String) mapPortfolio.get("portfolioDescription");
 
                 ret.put(name, id);
             }

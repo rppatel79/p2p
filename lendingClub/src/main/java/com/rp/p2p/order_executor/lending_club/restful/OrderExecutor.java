@@ -151,7 +151,7 @@ public class OrderExecutor //implements com.rp.p2p.order_executor.OrderExecutor
 
 
                     loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus")));
-                    loan.setDesc(loans.get("desc"));
+                    loan.setDescription(loans.get("description"));
                     loan.setPurpose(LoanPurpose.fromValue(loans.get("purpose").toUpperCase()));
                     //loan.setAddrZip(loans.get("addrZip"));
                     loan.setAddrState(loans.get("addrState"));
@@ -247,7 +247,7 @@ public class OrderExecutor //implements com.rp.p2p.order_executor.OrderExecutor
                 Map mapPortfolio = portfoliosList.get(i);
                 long id = Long.parseLong((String) mapPortfolio.get("portfolioId"));
                 String name = (String) mapPortfolio.get("portfolioName");
-                String desc = (String) mapPortfolio.get("portfolioDescription");
+                String description = (String) mapPortfolio.get("portfolioDescription");
 
                 ret.put(name, id);
             }
