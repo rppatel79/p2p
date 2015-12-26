@@ -1,6 +1,9 @@
 
 package com.rp.p2p.model;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,7 +48,7 @@ import java.util.Date;
  *       &lt;attribute name="reviewStatusD" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
  *       &lt;attribute name="reviewStatus" use="required" type="{http://ws.lendingclub.com/}ReviewStatus" />
  *       &lt;attribute name="url" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="desc" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="description" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="purpose" use="required" type="{http://ws.lendingclub.com/}LoanPurpose" />
  *       &lt;attribute name="title" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="addrCity" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -66,10 +69,13 @@ import java.util.Date;
 @XmlType(name = "LoanListing", propOrder = {
     "creditInfo"
 })
+@Entity(name= "LENDINGCLUB_LOANLISTING")
 public class LoanListing {
 
     @XmlElement(required = true)
+    @Embedded
     protected CreditInfo creditInfo;
+    @Id
     @XmlAttribute(name = "id", required = true)
     protected long id;
     @XmlAttribute(name = "memberId", required = true)
@@ -121,8 +127,8 @@ public class LoanListing {
     protected ReviewStatus reviewStatus;
     @XmlAttribute(name = "url", required = true)
     protected String url;
-    @XmlAttribute(name = "desc", required = true)
-    protected String desc;
+    @XmlAttribute(name = "description", required = true)
+    protected String description;
     @XmlAttribute(name = "purpose", required = true)
     protected LoanPurpose purpose;
     @XmlAttribute(name = "title", required = true)
@@ -648,27 +654,27 @@ public class LoanListing {
     }
 
     /**
-     * Gets the value of the desc property.
+     * Gets the value of the description property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * Sets the value of the desc property.
+     * Sets the value of the description property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setDesc(String value) {
-        this.desc = value;
+    public void setDescription(String value) {
+        this.description = value;
     }
 
     /**

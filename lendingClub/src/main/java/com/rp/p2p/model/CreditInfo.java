@@ -1,12 +1,14 @@
 
 package com.rp.p2p.model;
 
+import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
 
 
 /**
@@ -105,7 +107,7 @@ public class CreditInfo {
     protected Double delinqAmnt;
     @XmlAttribute(name = "earliestCrLine")
     @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar earliestCrLine;
+    protected Date earliestCrLine;
     @XmlAttribute(name = "ficoRangeLow")
     protected Integer ficoRangeLow;
     @XmlAttribute(name = "ficoRangeHigh")
@@ -393,27 +395,11 @@ public class CreditInfo {
         this.delinqAmnt = value;
     }
 
-    /**
-     * Gets the value of the earliestCrLine property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getEarliestCrLine() {
+    public Date getEarliestCrLine() {
         return earliestCrLine;
     }
 
-    /**
-     * Sets the value of the earliestCrLine property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setEarliestCrLine(XMLGregorianCalendar value) {
+    public void setEarliestCrLine(Date value) {
         this.earliestCrLine = value;
     }
 
