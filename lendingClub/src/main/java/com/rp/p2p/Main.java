@@ -242,7 +242,7 @@ public class Main
             StringBuilder builder = new StringBuilder();
             builder.append("<TABLE BORDER=\"5\">");
             builder.append("<TH COLSPAN=\"5\">");
-            builder.append("<H3><BR>").append(isSuccessList?"Successful":"Failures").append("Execution</H3>");
+            builder.append("<H3><BR>").append(isSuccessList?"Successful":"Failures").append(" Execution</H3>");
             builder.append("</TH>");
             builder.append("<TH>Loan Id</TH>");
             builder.append("<TH>Invested Amount</TH>");
@@ -251,13 +251,13 @@ public class Main
             builder.append("<TH>Rate</TH>");
             for (OrderConfirmation confirmation : orderConfirmation)
             {
-                builder.append("<TD>");
-                builder.append("<TR>").append(confirmation.getLoanId()).append("</TR>");
-                builder.append("<TR>").append(confirmation.getInvestedAmount()).append("</TR>");
-                builder.append("<TR>").append(confirmation.getExecutionStatus()).append("</TR>");
-                builder.append("<TR>").append("</TR>");
-                builder.append("<TR>").append("</TR>");
-                builder.append("</TD>");
+                builder.append("<TR>");
+                builder.append("<TD>").append(confirmation.getLoanId()).append("</TD>");
+                builder.append("<TD>").append(confirmation.getInvestedAmount()).append("</TD>");
+                builder.append("<TD>").append(confirmation.getExecutionStatus()).append("</TD>");
+                builder.append("<TD>").append("</TD>");
+                builder.append("<TD>").append("</TD>");
+                builder.append("</TR>");
             }
             builder.append("</TABLE>");
 
