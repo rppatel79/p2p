@@ -241,14 +241,21 @@ public class Main
         private static StringBuilder buildTable(Set<OrderConfirmation> orderConfirmation, boolean isSuccessList) {
             StringBuilder builder = new StringBuilder();
             builder.append("<TABLE BORDER=\"5\">");
+
+            builder.append("<TR>");
             builder.append("<TH COLSPAN=\"5\">");
             builder.append("<H3><BR>").append(isSuccessList?"Successful":"Failures").append(" Execution</H3>");
             builder.append("</TH>");
+            builder.append("</TR>");
+
+            builder.append("<TR>");
             builder.append("<TH>Loan Id</TH>");
             builder.append("<TH>Invested Amount</TH>");
             builder.append("<TH>ExecutionStatus</TH>");
             builder.append("<TH>Grade</TH>");
             builder.append("<TH>Rate</TH>");
+            builder.append("</TR>");
+
             for (OrderConfirmation confirmation : orderConfirmation)
             {
                 builder.append("<TR>");
