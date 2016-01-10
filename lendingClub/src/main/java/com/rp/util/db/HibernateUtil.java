@@ -1,6 +1,8 @@
 package com.rp.util.db;
 
+import com.rp.p2p.model.OrderConfirmation;
 import com.rp.util.ApplicationProperties;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 public class HibernateUtil {
 
     private static final ConcurrentMap<String,SessionFactory> sessionFactoryMap = new ConcurrentHashMap<String, SessionFactory>();
+    public enum DbId{P2P}
 
     private static SessionFactory buildSessionFactory(String db) {
         try {
@@ -45,14 +48,24 @@ public class HibernateUtil {
         }
     }
 
+    public static SessionFactory getSessionFactory(DbId dbId)
+    {
+        return getSessionFactory(dbId.name());
+    }
+
     public static void shutdown(String db) {
         // Close caches and connection pools
         getSessionFactory(db).close();
     }
 
+    public static void shutdown(DbId db) {
+        // Close caches and connection pools
+        shutdown(db.name());
+    }
+
     public static final void main(String args[])
     {
-        String db = "P2P";
+        DbId db = DbId.P2P;
 
         SessionFactory sessionFactory = getSessionFactory(db);
         shutdown(db);
