@@ -125,7 +125,7 @@ public class ProsperApi implements OriginatorApi
     public BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception {
         BrowseLoansResult browseLoansResult = getBrowseLoansResult(allLoans);
 
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory("P2P");
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
         try {
             Session session = sessionFactory.openSession();
             for (LoanListing loanListing : browseLoansResult.getLoans()) {

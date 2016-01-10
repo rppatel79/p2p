@@ -162,7 +162,7 @@ public class LendingClubApi implements OriginatorApi
         SessionFactory sessionFactory = null;
         Session session =null;
         try {
-            sessionFactory = HibernateUtil.getSessionFactory("P2P");
+            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
             session = sessionFactory.openSession();
             for (LoanListing loanListing : browseLoansResult.getLoans()) {
                 session.merge(loanListing);
