@@ -55,7 +55,7 @@ public class OrderConfirmation {
     @Enumerated(EnumType.STRING)
     protected List<OrderExecutionStatus> executionStatus;
     @XmlAttribute(name = "loanId", required = true)
-    protected String loanId;
+    protected long loanId;
     @XmlAttribute(name = "requestedAmount", required = true)
     protected double requestedAmount;
     @XmlAttribute(name = "investedAmount", required = true)
@@ -102,7 +102,7 @@ public class OrderConfirmation {
      * Gets the value of the loanId property.
      * 
      */
-    public String getLoanId() {
+    public long getLoanId() {
         return loanId;
     }
 
@@ -110,7 +110,7 @@ public class OrderConfirmation {
      * Sets the value of the loanId property.
      * 
      */
-    public void setLoanId(String value) {
+    public void setLoanId(long value) {
         this.loanId = value;
     }
 

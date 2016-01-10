@@ -66,7 +66,7 @@ public class ProsperApi implements OriginatorApi
 
                 if (orderConfirmationsMap != null) {
                     OrderConfirmation orderConfirmation = new OrderConfirmation();
-                    orderConfirmation.setLoanId((String) orderConfirmationsMap.get("ListingId"));
+                    orderConfirmation.setLoanId(Long.valueOf((String) orderConfirmationsMap.get("ListingId")));
                     orderConfirmation.setRequestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("RequestedAmount")));
                     orderConfirmation.setInvestedAmount((Double.parseDouble((String)orderConfirmationsMap.get("AmountInvested"))));
                     String status = (String) orderConfirmationsMap.get("State");
