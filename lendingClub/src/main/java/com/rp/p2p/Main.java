@@ -10,6 +10,7 @@ import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
 import com.rp.util.Mailer;
+import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
 
 import javax.mail.MessagingException;
@@ -168,6 +169,7 @@ public class Main
             }
             // build order
             final List<Order> orders = new ArrayList<Order>(toOrder.size());
+            final Map<Long, LoanListing> loanListingMap = new HashMap<Long, LoanListing>();
             {
                 for (LoanListing ll : toOrder) {
                     Order order = new Order();
@@ -178,6 +180,7 @@ public class Main
                         order.setRequestedAmount(25.0);
                     }
                     orders.add(order);
+                    loanListingMap.put(ll.getId(),ll);
                 }
             }
 
@@ -189,7 +192,7 @@ public class Main
             if (execute) {
                 if (orders.size() > 0) {
                     LoanDao.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
-                    new EmailHelper().sendEmail(sourceType, orderStatus, toOrder);
+                    new EmailHelper().sendEmail(sourceType, orderStatus, loanListingMap);
                 }
             }
         }
@@ -205,6 +208,9 @@ public class Main
             logger_.error("Unhandled exception",ex);
             throw ex;
         }
+        finally {
+            HibernateUtil.shutdownAll();
+        }
     }
 
     private static void usage() {
@@ -218,7 +224,7 @@ public class Main
             to_ = Collections.unmodifiableCollection(Collections.singleton(ApplicationProperties.getInstance().getProperty("EMAIL_TO")));
         }
 
-        public void sendEmail(Main.SourceType sourceType, LoanDao.OrderStatus orderStatus, List<LoanListing> toOrder) throws MessagingException, IOException {
+        public void sendEmail(Main.SourceType sourceType, LoanDao.OrderStatus orderStatus, Map<Long, LoanListing> loanListingMap) throws MessagingException, IOException {
             String subject = APPLICATION_NAME+" [" + sourceType + "] " + (orderStatus.getFailed().size() == 0 ? "Completed" : "FAILED");
 
             StringBuilder msg = new StringBuilder();
@@ -226,11 +232,11 @@ public class Main
 
             if (orderStatus.getSuccess().size() > 0)
             {
-                StringBuilder successTableBuilder = buildTable(orderStatus.getSuccess(), true);
+                StringBuilder successTableBuilder = buildTable(orderStatus.getSuccess(), loanListingMap,true);
                 msg.append(successTableBuilder);
             }
             if (orderStatus.getFailed().size() > 0) {
-                StringBuilder failureTableBuilder = buildTable(orderStatus.getFailed(), false);
+                StringBuilder failureTableBuilder = buildTable(orderStatus.getFailed(), loanListingMap,false);
                 msg.append(failureTableBuilder);
             }
             msg.append("</body></HTML>");
@@ -238,7 +244,7 @@ public class Main
             Mailer.getDefaultMailer().sendMessage(to_,subject,msg.toString());
         }
 
-        private static StringBuilder buildTable(Set<OrderConfirmation> orderConfirmation, boolean isSuccessList) {
+        private static StringBuilder buildTable(Set<OrderConfirmation> orderConfirmation, Map<Long, LoanListing> loanListingMap,boolean isSuccessList) {
             StringBuilder builder = new StringBuilder();
             builder.append("<TABLE BORDER=\"5\">");
 
@@ -258,12 +264,22 @@ public class Main
 
             for (OrderConfirmation confirmation : orderConfirmation)
             {
+                LoanListing loanListing = loanListingMap.get(confirmation.getLoanId());
+
                 builder.append("<TR>");
                 builder.append("<TD>").append(confirmation.getLoanId()).append("</TD>");
                 builder.append("<TD>").append(confirmation.getInvestedAmount()).append("</TD>");
                 builder.append("<TD>").append(confirmation.getExecutionStatus()).append("</TD>");
-                builder.append("<TD>").append("</TD>");
-                builder.append("<TD>").append("</TD>");
+
+                if (loanListing == null) {
+                    builder.append("<TD>").append("</TD>");
+                    builder.append("<TD>").append("</TD>");
+                }
+                else
+                {
+                    builder.append("<TD>").append(loanListing.getGrade()+"-"+loanListing.getSubGrade()).append("</TD>");
+                    builder.append("<TD>").append(loanListing.getIntRate()).append("</TD>");
+                }
                 builder.append("</TR>");
             }
             builder.append("</TABLE>");

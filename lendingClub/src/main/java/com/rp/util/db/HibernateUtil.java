@@ -9,9 +9,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -66,14 +64,30 @@ public class HibernateUtil {
 
     @Override
     protected void finalize() throws Throwable {
-        for (DbId dbId : DbId.values())
+        List<String> sessionFactoryNotClosed = shutdownAll();
+
+        for (String dbId : sessionFactoryNotClosed)
         {
-            SessionFactory sessionFactory= HibernateUtil.getSessionFactory(dbId);
+            logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  The application should proactively close the session factory");
+        }
+
+
+        super.finalize();
+    }
+
+    public static final List<String>  shutdownAll() {
+        List<String> ret = new ArrayList<String>(sessionFactoryMap.size());
+
+        for (Map.Entry<String,SessionFactory> entry : sessionFactoryMap.entrySet())
+        {
+            SessionFactory sessionFactory= entry.getValue();
             if (sessionFactory != null && !sessionFactory.isClosed())
             {
+                String dbId = entry.getKey();
+                ret.add(dbId);
+
                 try {
                     shutdown(dbId);
-                    logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  The application should proactively close the session factory");
                 }
                 catch(Exception ex) {
                     logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  While trying to close the session factory, the following exception ",ex);
@@ -81,7 +95,7 @@ public class HibernateUtil {
             }
         }
 
-        super.finalize();
+        return ret;
     }
 
     public static final void main(String args[])
