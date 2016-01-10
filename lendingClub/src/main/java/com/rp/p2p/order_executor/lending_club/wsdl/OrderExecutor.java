@@ -47,16 +47,6 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
                     logger_.warn("Unable to close session.  Continuing without throwing exception",ex);
                 }
             }
-            if (sessionFactory != null && !sessionFactory.isClosed())
-            {
-                try{
-                    sessionFactory.close();
-                }
-                catch (Exception ex)
-                {
-                    logger_.warn("Unable to close sessionfactory.  Continuing without throwing exception",ex);
-                }
-            }
         }
 
         return orderStatus;
