@@ -110,6 +110,11 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed VALID_GRADE [" + loan.getGrade()+"] " + loan.getId());
                 brokenRules++;
             }
+            if((loan.getIntRate() < 0.08))
+            {
+                logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
+                brokenRules++;
+            }
             else
             {
                 if (allInvestedLoans.contains(loan.getId()))
