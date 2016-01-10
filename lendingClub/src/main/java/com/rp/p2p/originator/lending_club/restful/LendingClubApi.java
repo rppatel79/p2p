@@ -177,8 +177,6 @@ public class LendingClubApi implements OriginatorApi
         {
             if (session != null )
                 session.close();
-            if (sessionFactory != null && !sessionFactory.isClosed())
-                sessionFactory.close();
         }
 
         return browseLoansResult;
