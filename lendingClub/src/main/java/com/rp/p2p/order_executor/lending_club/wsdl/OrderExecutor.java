@@ -34,6 +34,7 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
 
             saveOrderConfirmation(session, orderStatus.getFailed());
             saveOrderConfirmation(session, orderStatus.getSuccess());
+            session.flush();
         }
         finally {
             if (session != null)
