@@ -2,13 +2,13 @@ package com.rp.p2p.order_executor.lending_club.wsdl;
 
 
 import com.rp.p2p.loan.LoanDao;
-import com.rp.p2p.model.BrowseLoansResult;
-import com.rp.p2p.model.LoanListing;
-import com.rp.p2p.model.Order;
-import com.rp.p2p.model.OrderInstructConfirmation;
+import com.rp.p2p.model.*;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
 import com.rp.p2p.originator.OriginatorApi;
+import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.util.*;
 
@@ -22,7 +22,49 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
         OriginatorApi originatorApi = new LendingClubApi();
         final LoanDao loanDao = new LoanDao();
         OrderInstructConfirmation orderInstructConfirmation = originatorApi.orderSubmitOrders(orders);
-        return loanDao.investLoans(orders, orderInstructConfirmation.getOrderConfirmations());
+        LoanDao.OrderStatus orderStatus = loanDao.investLoans(orders, orderInstructConfirmation.getOrderConfirmations());
+
+        // save the records
+        SessionFactory sessionFactory=null;
+        Session session =null;
+        try
+        {
+            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
+            session = sessionFactory.openSession();
+
+            saveOrderConfirmation(session, orderStatus.getFailed());
+            saveOrderConfirmation(session, orderStatus.getSuccess());
+        }
+        finally {
+            if (session != null)
+            {
+                try{
+                    session.close();
+                }
+                catch (Exception ex)
+                {
+                    logger_.warn("Unable to close session.  Continuing without throwing exception",ex);
+                }
+            }
+            if (sessionFactory != null && !sessionFactory.isClosed())
+            {
+                try{
+                    sessionFactory.close();
+                }
+                catch (Exception ex)
+                {
+                    logger_.warn("Unable to close sessionfactory.  Continuing without throwing exception",ex);
+                }
+            }
+        }
+
+        return orderStatus;
+    }
+
+    private void saveOrderConfirmation(Session session, Set<OrderConfirmation> orderConfirmationSet) {
+        for (OrderConfirmation orderConfirmation : orderConfirmationSet) {
+            session.save(orderConfirmation);
+        }
     }
 
     @Override

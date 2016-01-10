@@ -4,11 +4,12 @@
 <hibernate-configuration>
     <session-factory>
         <property name="connection.pool_size">1</property>
-        <!--<property name="dialect">com.mysql.jdbc.Driver</property>-->
         <property name="current_session_context_class">thread</property>
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="show_sql">true</property>
-        <!--<property name="hbm2ddl.auto">create</property>-->
+        <property name="hbm2ddl.auto">validate</property>
         <mapping class="com.rp.p2p.model.LoanListing"/>
+        <mapping class="com.rp.p2p.model.OrderConfirmation"/>
+        <mapping class="com.rp.p2p.model.OrderExecutionStatus"/>
     </session-factory>
 </hibernate-configuration>

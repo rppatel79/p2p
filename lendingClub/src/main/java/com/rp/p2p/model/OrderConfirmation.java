@@ -1,8 +1,13 @@
 
 package com.rp.p2p.model;
 
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,8 +40,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OrderConfirmation", propOrder = {
     "executionStatus"
 })
+@Entity
+@Table(name= "LENDINGCLUB_ORDERCONFIRMATION")
 public class OrderConfirmation {
-
+    @Id
+    @GenericGenerator(name="gen",strategy="increment")
+    @GeneratedValue(generator="gen")
+    @Column(name = "ID", unique = true, nullable = false, precision = 15, scale = 0)
+    private long id_;
+    @ElementCollection ()
+    @JoinTable(name = "Order_Execution_Status_types",
+            joinColumns = @JoinColumn(name = "Order_Execution_Status_id"))
+    @Column(name = "Order_Execution_Status_key_id", nullable = false)
+    @Enumerated(EnumType.STRING)
     protected List<OrderExecutionStatus> executionStatus;
     @XmlAttribute(name = "loanId", required = true)
     protected String loanId;
@@ -44,6 +60,14 @@ public class OrderConfirmation {
     protected double requestedAmount;
     @XmlAttribute(name = "investedAmount", required = true)
     protected double investedAmount;
+
+    public long getId() {
+        return id_;
+    }
+
+    public void setId(long id) {
+        id_ = id;
+    }
 
     /**
      * Gets the value of the executionStatus property.
