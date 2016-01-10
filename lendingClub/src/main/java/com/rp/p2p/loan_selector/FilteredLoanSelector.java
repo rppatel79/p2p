@@ -55,7 +55,7 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed VALID_HOMEOWNERSHIP [" +loan.getHomeOwnership()+ "] " + loan.getId());
                 brokenRules++;
             }
-            if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 15.0 )
+            if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 17.0 )
             {
                 logger_.info("Failed ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
                 brokenRules++;
@@ -75,7 +75,7 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
                 brokenRules++;
             }
-            if (loan.getCreditInfo().getDti() > 20.0)
+            if (loan.getCreditInfo().getDti() > 21.0)
             {
                 logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
                 brokenRules++;
