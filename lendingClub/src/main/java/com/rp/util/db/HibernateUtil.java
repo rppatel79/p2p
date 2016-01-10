@@ -2,6 +2,7 @@ package com.rp.util.db;
 
 import com.rp.p2p.model.OrderConfirmation;
 import com.rp.util.ApplicationProperties;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class HibernateUtil {
-
+    private final static Logger logger_ = Logger.getLogger(HibernateUtil.class);
     private static final ConcurrentMap<String,SessionFactory> sessionFactoryMap = new ConcurrentHashMap<String, SessionFactory>();
     public enum DbId{P2P}
 
@@ -63,11 +64,41 @@ public class HibernateUtil {
         shutdown(db.name());
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        for (DbId dbId : DbId.values())
+        {
+            SessionFactory sessionFactory= HibernateUtil.getSessionFactory(dbId);
+            if (sessionFactory != null && !sessionFactory.isClosed())
+            {
+                try {
+                    shutdown(dbId);
+                    logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  The application should proactively close the session factory");
+                }
+                catch(Exception ex) {
+                    logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  While trying to close the session factory, the following exception ",ex);
+                }
+            }
+        }
+
+        super.finalize();
+    }
+
     public static final void main(String args[])
     {
         DbId db = DbId.P2P;
 
-        SessionFactory sessionFactory = getSessionFactory(db);
+        {
+            SessionFactory sessionFactory = getSessionFactory(db);
+            Session session = sessionFactory.openSession();
+            session.close();
+        }
+        {
+            SessionFactory sessionFactory = getSessionFactory(db);
+            Session session = sessionFactory.openSession();
+            session.close();
+        }
+
         shutdown(db);
     }
 }
