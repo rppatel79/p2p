@@ -263,7 +263,7 @@ public class LendingClubApi implements OriginatorApi
             //loan.getCreditInfo().setEarliestCrLine(loans.get("earliestCrLine"));//:"1984-09-15T00:00:00.000-07:00",
             loan.getCreditInfo().setFicoRangeLow(Integer.valueOf(loans.get("ficoRangeLow")));//:750,
             loan.getCreditInfo().setFicoRangeHigh(Integer.valueOf(loans.get("ficoRangeHigh")));//:754,
-            loan.getCreditInfo().setInqLast6Mths(Integer.valueOf(loans.get("inqLast6Mths")));//:0,
+            loan.getCreditInfo().setInqLast6Mths(IntegerValueOf(loans.get("inqLast6Mths")));//:0,
             loan.getCreditInfo().setMthsSinceLastDelinq(IntegerValueOf(loans.get("mthsSinceLastDelinq")));//:90,
             loan.getCreditInfo().setMthsSinceLastRecord(IntegerValueOf(loans.get("mthsSinceLastRecord")));//:0,
             loan.getCreditInfo().setMthsSinceRecentInq(IntegerValueOf(loans.get("mthsSinceRecentInq")));//:14,
