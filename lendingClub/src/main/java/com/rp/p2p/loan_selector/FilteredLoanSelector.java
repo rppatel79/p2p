@@ -115,6 +115,12 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
                 brokenRules++;
             }
+            if((loan.getIntRate() +5.0 )> (loan.getExpDefaultRate()+loan.getServiceFeeRate()))//MIN_INT_RATE
+            {
+                logger_.info("Failed MIN_INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
+                brokenRules++;
+            }
+
             else
             {
                 if (allInvestedLoans.contains(loan.getId()))
