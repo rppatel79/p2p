@@ -53,9 +53,11 @@ public class Main
                 return;
             }
             sourceType = SourceType.valueOf(args[0]);
-            boolean execute = false;
+
+            Double requestAmount = null;
             if (args.length == 2)
-                execute = Boolean.valueOf(args[1]);
+                requestAmount  = Double.valueOf(args[1]);
+            boolean execute = requestAmount != null;
 
             logger_.info("Executing [" + sourceType + "] with execute [" + execute + "]");
 
@@ -167,29 +169,29 @@ public class Main
                 };
                 toOrder = selector.select(loanListings);
             }
-            // build order
-            final List<Order> orders = new ArrayList<Order>(toOrder.size());
-            final Map<Long, LoanListing> loanListingMap = new HashMap<Long, LoanListing>();
-            {
-                for (LoanListing ll : toOrder) {
-                    Order order = new Order();
-                    {
-                        Long portfolioId = portfolioNameToId.get(sourceType.getPortfolioName());
-                        order.setPortfolioId(portfolioId);
-                        order.setLoanId(ll.getId());
-                        order.setRequestedAmount(25.0);
-                    }
-                    orders.add(order);
-                    loanListingMap.put(ll.getId(),ll);
-                }
-            }
-
-            logger_.info("Buyings:");
-            for (Order order : orders) {
-                logger_.info("\t" + order.getLoanId());
-            }
 
             if (execute) {
+                // build order
+                final List<Order> orders = new ArrayList<Order>(toOrder.size());
+                final Map<Long, LoanListing> loanListingMap = new HashMap<Long, LoanListing>();
+                {
+                    for (LoanListing ll : toOrder) {
+                        Order order = new Order();
+                        {
+                            Long portfolioId = portfolioNameToId.get(sourceType.getPortfolioName());
+                            order.setPortfolioId(portfolioId);
+                            order.setLoanId(ll.getId());
+                            order.setRequestedAmount(requestAmount);
+                        }
+                        orders.add(order);
+                        loanListingMap.put(ll.getId(),ll);
+                    }
+                }
+                logger_.info("Buyings:");
+                for (Order order : orders) {
+                    logger_.info("\t" + order.getLoanId());
+                }
+
                 if (orders.size() > 0) {
                     LoanDao.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
                     new EmailHelper().sendEmail(sourceType, orderStatus, loanListingMap);
@@ -214,7 +216,7 @@ public class Main
     }
 
     private static void usage() {
-        logger_.info(Main.class.getName() + " <filterSource|P2pPicks> <false|true>");
+        logger_.info(Main.class.getName() + " <filterSource|P2pPicks> <requestedAmount>");
     }
     public static class EmailHelper
     {
