@@ -149,7 +149,13 @@ public class LendingClubApi implements OriginatorApi
 //            if (!map.containsKey("loans")) {
 //                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
 //            }
-            return convertLoans((List<Map<String, String>>) map.get("loans"));
+            List<Map<String, String>> loansMap = (List<Map<String, String>>) map.get("loans");
+            if (loansMap == null) {
+                logger_.warn("Made RESTful request but did not get any results.");
+                return new BrowseLoansResult();//return an empty shell
+            }
+            else
+                return convertLoans(loansMap);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
