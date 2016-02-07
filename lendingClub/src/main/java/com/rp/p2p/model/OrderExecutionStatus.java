@@ -62,7 +62,8 @@ public enum OrderExecutionStatus {
     ERROR_ADDING_NOTE_TO_PORTFOLIO,
     SYSTEM_BUSY,
     TEMPORARILY_UNAVAILABLE,
-    NOT_AN_IN_FUNDING_LOAN;
+    NOT_AN_IN_FUNDING_LOAN,
+    REQUESTED_AMOUNT_ROUNDED;
 
     public String value() {
         return name();
