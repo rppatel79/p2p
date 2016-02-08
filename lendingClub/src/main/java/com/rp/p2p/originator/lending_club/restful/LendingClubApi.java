@@ -5,15 +5,12 @@ import com.codesnippets4all.json.parsers.JsonParserFactory;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
-import com.rp.util.db.HibernateUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -159,33 +156,6 @@ public class LendingClubApi implements OriginatorApi
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception {
-        BrowseLoansResult browseLoansResult = getBrowseLoansResult(allLoans);
-
-        SessionFactory sessionFactory = null;
-        Session session =null;
-        try {
-            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
-            session = sessionFactory.openSession();
-            for (LoanListing loanListing : browseLoansResult.getLoans()) {
-                session.merge(loanListing);
-            }
-            session.flush();
-        }
-        catch(Exception ex)
-        {
-            logger_.warn("Unable to save loan.  Continuing without failing",ex);
-        }
-        finally
-        {
-            if (session != null )
-                session.close();
-        }
-
-        return browseLoansResult;
     }
 
     private Collection<OwnedNote> convertNotesOwned(List<Map<String, String>> allNotesOwned) throws ParseException {

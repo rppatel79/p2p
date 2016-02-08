@@ -1,10 +1,12 @@
 package com.rp.p2p;
 
 import com.rp.p2p.analytics.P2pPicksApi;
+import com.rp.p2p.loan.db.BrowseLoansResultDao;
 import com.rp.p2p.loan_selector.FilteredLoanSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.model.*;
 import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
+import com.rp.p2p.originator.DbOriginatorApi;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
@@ -60,7 +62,7 @@ public class Main
 
             logger_.info("Executing [" + sourceType + "] with execute [" + execute + "]");
 
-            final OriginatorApi originatorApi = new LendingClubApi();
+            final DbOriginatorApi originatorApi = new DbOriginatorApi(new LendingClubApi(),new BrowseLoansResultDao());
             Map<String, Long> portfolioNameToId = getPortfolios(originatorApi);
 
             List<LoanListing> toOrder;

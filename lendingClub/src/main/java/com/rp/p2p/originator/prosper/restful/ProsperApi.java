@@ -122,25 +122,6 @@ public class ProsperApi implements OriginatorApi
     }
 
     @Override
-    public BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception {
-        BrowseLoansResult browseLoansResult = getBrowseLoansResult(allLoans);
-
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
-        try {
-            Session session = sessionFactory.openSession();
-            for (LoanListing loanListing : browseLoansResult.getLoans()) {
-                session.saveOrUpdate(loanListing);
-            }
-        }
-        catch(Exception ex)
-        {
-            logger_.warn("Unable to save loan.  Continuing without failing",ex);
-        }
-
-        return browseLoansResult;
-    }
-
-    @Override
     public Set<Long> getAllInvestedLoans() throws IOException {
         throw new UnsupportedOperationException("Not completed yet");
     }

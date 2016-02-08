@@ -17,8 +17,6 @@ public interface OriginatorApi
 
     BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception;
 
-    BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception;
-
     Collection<OwnedNote> getNotesOwned();
 
     Map<String,Long> orderGetPortfolios() throws Exception;

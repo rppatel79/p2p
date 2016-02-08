@@ -12,7 +12,7 @@ import java.util.Set;
 public class OrderStatusDao implements com.rp.p2p.loan.OrderStatusDao {
     private final static Logger logger_ =Logger.getLogger(OrderStatusDao.class);
     @Override
-    public void saveOrderStatus(com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus) {
+    public void save(com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus) {
         // save the records
         SessionFactory sessionFactory = null;
         Session session = null;

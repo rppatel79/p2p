@@ -20,7 +20,7 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
         OriginatorApi originatorApi = new LendingClubApi();
         OrderInstructConfirmation orderInstructConfirmation = originatorApi.orderSubmitOrders(orders);
         OrderStatus orderStatus = investLoans(orders, orderInstructConfirmation.getOrderConfirmations());
-        (new OrderStatusDao()).saveOrderStatus(orderStatus);
+        (new OrderStatusDao()).save(orderStatus);
 
 
         return orderStatus;
