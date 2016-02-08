@@ -1,6 +1,10 @@
 
 package com.rp.p2p.model;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -70,6 +74,7 @@ import java.util.Date;
     "creditInfo"
 })
 @Entity(name= "LENDINGCLUB_LOANLISTING")
+@DynamoDBTable(tableName="lendingclub_loanlisting")
 public class LoanListing {
 
     @XmlElement(required = true)
@@ -77,76 +82,109 @@ public class LoanListing {
     protected CreditInfo creditInfo;
     @Id
     @XmlAttribute(name = "id", required = true)
+    @DynamoDBHashKey(attributeName="Id")
     protected long id;
     @XmlAttribute(name = "memberId", required = true)
+    @DynamoDBAttribute(attributeName="memberId")
     protected String memberId;
     @XmlAttribute(name = "loanAmnt", required = true)
+    @DynamoDBAttribute(attributeName="loanAmnt")
     protected double loanAmnt;
     @XmlAttribute(name = "fundedAmnt", required = true)
+    @DynamoDBAttribute(attributeName="fundedAmnt")
     protected double fundedAmnt;
     @XmlAttribute(name = "term", required = true)
+    @DynamoDBAttribute(attributeName="term")
     protected int term;
     @XmlAttribute(name = "intRate", required = true)
+    @DynamoDBAttribute(attributeName="intRate")
     protected double intRate;
     @XmlAttribute(name = "expDefaultRate", required = true)
+    @DynamoDBAttribute(attributeName="expDefaultRate")
     protected double expDefaultRate;
     @XmlAttribute(name = "serviceFeeRate", required = true)
+    @DynamoDBAttribute(attributeName="serviceFeeRate")
     protected double serviceFeeRate;
     @XmlAttribute(name = "installment")
+    @DynamoDBAttribute(attributeName="installment")
     protected Double installment;
     @XmlAttribute(name = "grade", required = true)
+    @DynamoDBAttribute(attributeName="grade")
     protected LoanGrade grade;
     @XmlAttribute(name = "subGrade", required = true)
+    @DynamoDBAttribute(attributeName="subGrade")
     protected LoanSubGrade subGrade;
     @XmlAttribute(name = "empLength")
+    @DynamoDBAttribute(attributeName="empLength")
     protected Integer empLength;
     @XmlAttribute(name = "homeOwnership", required = true)
+    @DynamoDBAttribute(attributeName="homeOwnership")
     protected HomeOwnership homeOwnership;
     @XmlAttribute(name = "otherHomeOwnership", required = true)
+    @DynamoDBAttribute(attributeName="otherHomeOwnership")
     protected String otherHomeOwnership;
     @XmlAttribute(name = "annualInc", required = true)
+    @DynamoDBAttribute(attributeName="annualInc")
     protected double annualInc;
     @XmlAttribute(name = "isIncV", required = true)
+    @DynamoDBAttribute(attributeName="isIncV")
     protected IncomeVerification isIncV;
     @XmlAttribute(name = "acceptD")
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="acceptD")
     protected Date acceptD;
     @XmlAttribute(name = "expD", required = true)
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="expD")
     protected Date expD;
     @XmlAttribute(name = "listD", required = true)
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="listD")
     protected Date listD;
     @XmlAttribute(name = "creditPullD", required = true)
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="creditPullD")
     protected Date creditPullD;
     @XmlAttribute(name = "reviewStatusD")
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="reviewStatusD")
     protected Date reviewStatusD;
     @XmlAttribute(name = "reviewStatus", required = true)
+    @DynamoDBAttribute(attributeName="reviewStatus")
     protected ReviewStatus reviewStatus;
     @XmlAttribute(name = "url", required = true)
+    @DynamoDBAttribute(attributeName="url")
     protected String url;
     @XmlAttribute(name = "description", required = true)
+    @DynamoDBAttribute(attributeName="description")
     protected String description;
     @XmlAttribute(name = "purpose", required = true)
+    @DynamoDBAttribute(attributeName="purpose")
     protected LoanPurpose purpose;
     @XmlAttribute(name = "title", required = true)
+    @DynamoDBAttribute(attributeName="title")
     protected String title;
     @XmlAttribute(name = "addrCity", required = true)
+    @DynamoDBAttribute(attributeName="addrCity")
     protected String addrCity;
     @XmlAttribute(name = "addrState", required = true)
+    @DynamoDBAttribute(attributeName="addrState")
     protected String addrState;
     @XmlAttribute(name = "msa")
+    @DynamoDBAttribute(attributeName="msa")
     protected String msa;
     @XmlAttribute(name = "investorCount")
+    @DynamoDBAttribute(attributeName="investorCount")
     protected Integer investorCount;
     @XmlAttribute(name = "ilsExpD")
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="ilsExpD")
     protected Date ilsExpD;
     @XmlAttribute(name = "initialListStatus")
+    @DynamoDBAttribute(attributeName="initialListStatus")
     protected String initialListStatus;
     @XmlAttribute(name = "empTitle")
+    @DynamoDBAttribute(attributeName="empTitle")
     protected String empTitle;
 
     /**

@@ -412,6 +412,21 @@ public class LendingClubApi implements OriginatorApi
         throw lastEx;
     }
 
+    @Override
+    public Set<Long> getAllInvestedLoans() throws IOException
+    {
+        LendingClubApi lendingClubApi = new LendingClubApi();
+        Collection<OwnedNote> allOwnedNotes = lendingClubApi.getNotesOwned();
+        Set<Long> ret = new HashSet<Long>();
+        for (OwnedNote note : allOwnedNotes)
+        {
+            ret.add(note.getLoanId());
+        }
+
+        return ret;
+    }
+
+
     public static void main(String[] args) throws Exception {
         LendingClubApi lendingClubApi = new LendingClubApi();
         lendingClubApi.getNotesOwned();

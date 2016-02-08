@@ -1,7 +1,7 @@
 package com.rp.p2p.loan_selector;
 
-import com.rp.p2p.loan.LoanDao;
 import com.rp.p2p.model.*;
+import com.rp.p2p.originator.OriginatorApi;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -39,12 +39,10 @@ public class FilteredLoanSelector implements LoansSelector
         VALID_TERM.add(36);
     }
 
-    private final LoanDao loanDao = new LoanDao();
-
     @Override
-    public List<LoanListing> select(List<LoanListing> loanSelector) throws Exception
+    public List<LoanListing> select(Set<Long> allInvestedLoans,List<LoanListing> loanSelector) throws Exception
     {
-        Set<Long> allInvestedLoans = Collections.unmodifiableSet(loanDao.getAllInvestedLoans());
+        //Set<Long> allInvestedLoans = Collections.unmodifiableSet(originatorApi,loanDao.getAllInvestedLoans());
         List<LoanListing> ret = new ArrayList<LoanListing>(loanSelector.size());
 
         for (LoanListing loan : loanSelector) {

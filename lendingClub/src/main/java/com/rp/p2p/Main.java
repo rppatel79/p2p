@@ -1,7 +1,6 @@
 package com.rp.p2p;
 
 import com.rp.p2p.analytics.P2pPicksApi;
-import com.rp.p2p.loan.LoanDao;
 import com.rp.p2p.loan_selector.FilteredLoanSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.model.*;
@@ -61,15 +60,14 @@ public class Main
 
             logger_.info("Executing [" + sourceType + "] with execute [" + execute + "]");
 
-            OriginatorApi originatorApi = new LendingClubApi();
-            final LoanDao loanDao = new LoanDao();
+            final OriginatorApi originatorApi = new LendingClubApi();
             Map<String, Long> portfolioNameToId = getPortfolios(originatorApi);
 
             List<LoanListing> toOrder;
             if (SourceType.filterSource == sourceType) {
                 BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
                 FilteredLoanSelector filteredLoanSelector = new FilteredLoanSelector();
-                toOrder = filteredLoanSelector.select(browseLoansResult.getLoans());
+                toOrder = filteredLoanSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
             } else {
                 P2pPicksApi p2pPicksApi = new P2pPicksApi();
                 P2pPicksApi.PicksResponse picksResponse = p2pPicksApi.list(null, "profit-maximizer");
@@ -108,10 +106,10 @@ public class Main
 
 
                     @Override
-                    public List<LoanListing> select(List<LoanListing> loanSelector) throws Exception {
+                    public List<LoanListing> select(Set<Long> allInvestedLoans,List<LoanListing> loanSelector) throws Exception {
                         List<LoanListing> ret = new ArrayList<LoanListing>();
 
-                        final Set<Long> allInvestedLoans = loanDao.getAllInvestedLoans();
+                        //final Set<Long> allInvestedLoans = originatorApi.getAllInvestedLoans();
                         for (LoanListing loan : loanSelector) {
                             if (!VALID_GRADE.contains(loan.getGrade())) {
                                 logger_.info("Failed VALID_GRADE" + " " + loan.getId());
@@ -167,7 +165,7 @@ public class Main
                         return ret;
                     }
                 };
-                toOrder = selector.select(loanListings);
+                toOrder = selector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),loanListings);
             }
 
             if (execute) {
@@ -193,7 +191,7 @@ public class Main
                 }
 
                 if (orders.size() > 0) {
-                    LoanDao.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
+                    com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
                     new EmailHelper().sendEmail(sourceType, orderStatus, loanListingMap);
                 }
             }
@@ -226,7 +224,7 @@ public class Main
             to_ = Collections.unmodifiableCollection(Collections.singleton(ApplicationProperties.getInstance().getProperty("EMAIL_TO")));
         }
 
-        public void sendEmail(Main.SourceType sourceType, LoanDao.OrderStatus orderStatus, Map<Long, LoanListing> loanListingMap) throws MessagingException, IOException {
+        public void sendEmail(Main.SourceType sourceType, com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus, Map<Long, LoanListing> loanListingMap) throws MessagingException, IOException {
             String subject = APPLICATION_NAME+" [" + sourceType + "] " + (orderStatus.getFailed().size() == 0 ? "Completed" : "FAILED");
 
             StringBuilder msg = new StringBuilder();

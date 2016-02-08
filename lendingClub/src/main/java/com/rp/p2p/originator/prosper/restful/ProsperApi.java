@@ -140,6 +140,11 @@ public class ProsperApi implements OriginatorApi
         return browseLoansResult;
     }
 
+    @Override
+    public Set<Long> getAllInvestedLoans() throws IOException {
+        throw new UnsupportedOperationException("Not completed yet");
+    }
+
     private static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
         List<Map<String, Object>> ret = new LinkedList<Map<String, Object>>();
         for ( int i = 0 ; i < object.length() ; i++)

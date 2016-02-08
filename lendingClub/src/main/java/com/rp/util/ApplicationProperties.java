@@ -16,21 +16,22 @@ public class ApplicationProperties
 
     private final Logger logger_ = Logger.getLogger(ApplicationProperties.class);
     private Properties properties_ = new Properties();
+    private String propertiesFileName_;
 
     private ApplicationProperties() throws FileNotFoundException,IOException
     {
-        String propertiesFileName = DEFAULT_PROPERTIES;
+        propertiesFileName_ = DEFAULT_PROPERTIES;
         if (System.getProperty(VM_PROPERTIES) != null)
         {
-            propertiesFileName = System.getProperty(VM_PROPERTIES);
+            propertiesFileName_ = System.getProperty(VM_PROPERTIES);
         }
 
         BufferedInputStream bufferedInputStream=null;
         try {
-            File propertiesFile = new File(propertiesFileName);
+            File propertiesFile = new File(propertiesFileName_);
             if (!propertiesFile.exists())
                 throw new FileNotFoundException("File does not exist. ["+propertiesFile.getAbsolutePath()+"]");
-            bufferedInputStream=new BufferedInputStream(new FileInputStream(propertiesFileName));
+            bufferedInputStream=new BufferedInputStream(new FileInputStream(propertiesFileName_));
             properties_.load(bufferedInputStream);
         }
         finally

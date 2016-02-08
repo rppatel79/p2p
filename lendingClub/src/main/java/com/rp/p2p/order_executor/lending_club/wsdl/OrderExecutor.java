@@ -1,15 +1,13 @@
 package com.rp.p2p.order_executor.lending_club.wsdl;
 
 
-import com.rp.p2p.loan.LoanDao;
+import com.rp.p2p.loan.db.OrderStatusDao;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
 import com.rp.p2p.originator.OriginatorApi;
-import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
@@ -17,45 +15,45 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
     private final static Logger logger_ =Logger.getLogger(OrderExecutor.class);
 
     @Override
-    public LoanDao.OrderStatus order(Collection<Order> orders)throws Exception
+    public OrderStatus order(Collection<Order> orders)throws Exception
     {
         OriginatorApi originatorApi = new LendingClubApi();
-        final LoanDao loanDao = new LoanDao();
         OrderInstructConfirmation orderInstructConfirmation = originatorApi.orderSubmitOrders(orders);
-        LoanDao.OrderStatus orderStatus = loanDao.investLoans(orders, orderInstructConfirmation.getOrderConfirmations());
+        OrderStatus orderStatus = investLoans(orders, orderInstructConfirmation.getOrderConfirmations());
+        (new OrderStatusDao()).saveOrderStatus(orderStatus);
 
-        // save the records
-        SessionFactory sessionFactory=null;
-        Session session =null;
-        try
-        {
-            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
-            session = sessionFactory.openSession();
-
-            saveOrderConfirmation(session, orderStatus.getFailed());
-            saveOrderConfirmation(session, orderStatus.getSuccess());
-            session.flush();
-        }
-        finally {
-            if (session != null)
-            {
-                try{
-                    session.close();
-                }
-                catch (Exception ex)
-                {
-                    logger_.warn("Unable to close session.  Continuing without throwing exception",ex);
-                }
-            }
-        }
 
         return orderStatus;
     }
 
-    private void saveOrderConfirmation(Session session, Set<OrderConfirmation> orderConfirmationSet) {
-        for (OrderConfirmation orderConfirmation : orderConfirmationSet) {
-            session.save(orderConfirmation);
+    private OrderStatus investLoans(Collection<Order> orders, Collection<OrderConfirmation> orderConfirmations) throws IOException
+    {
+        Map<Long, Order> requestedOrderMap = new HashMap<Long,Order>();
+        for (Order order : orders)
+        {
+            requestedOrderMap.put(order.getLoanId(),order);
         }
+
+        final Set<OrderConfirmation> success= new HashSet<OrderConfirmation>();
+        final Set<OrderConfirmation> failed = new HashSet<OrderConfirmation>();
+        for (OrderConfirmation orderConfirmation : orderConfirmations)
+        {
+            if (orderConfirmation.getExecutionStatus().contains(OrderExecutionStatus.ORDER_FULFILLED))
+            {
+                success.add(orderConfirmation);
+            }
+            else
+            {
+                failed.add(orderConfirmation);
+            }
+        }
+
+        for (OrderConfirmation orderConfirmation : failed)
+        {
+            logger_.info("The loan:" + orderConfirmation.getLoanId() + " failed because " + orderConfirmation.getExecutionStatus());
+        }
+
+        return new OrderStatus(success,failed);
     }
 
     @Override

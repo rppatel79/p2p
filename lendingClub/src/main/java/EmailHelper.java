@@ -1,7 +1,7 @@
 import com.rp.p2p.Main;
-import com.rp.p2p.loan.LoanDao;
 import com.rp.p2p.model.LoanListing;
 import com.rp.p2p.model.OrderConfirmation;
+import com.rp.p2p.order_executor.OrderExecutor;
 import com.rp.util.ApplicationProperties;
 import com.rp.util.Mailer;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class EmailHelper
 {
-    public static void sendEmail(Main.SourceType sourceType, LoanDao.OrderStatus orderStatus, List<LoanListing> toOrder) throws MessagingException,IOException {
+    public static void sendEmail(Main.SourceType sourceType, OrderExecutor.OrderStatus orderStatus, List<LoanListing> toOrder) throws MessagingException,IOException {
         String subject = "P2P Order [" + sourceType + "] " + (orderStatus.getFailed().size() == 0 ? "Completed" : "FAILED");
 
         StringBuilder msg = new StringBuilder();

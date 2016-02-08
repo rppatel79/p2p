@@ -5,12 +5,16 @@ import com.rp.p2p.model.Order;
 import com.rp.p2p.model.OrderInstructConfirmation;
 import com.rp.p2p.model.OwnedNote;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface OriginatorApi
 {
+    public Set<Long> getAllInvestedLoans() throws IOException;
+
     BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception;
 
     BrowseLoansResult getAndStoreBrowseLoansResult(boolean allLoans) throws Exception;
