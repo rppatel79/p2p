@@ -5,6 +5,7 @@ import com.rp.p2p.loan.db.OrderStatusDao;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
 import com.rp.p2p.originator.OriginatorApi;
+import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -74,45 +75,45 @@ public class OrderExecutor implements com.rp.p2p.order_executor.OrderExecutor
             return;
         }
 
-        int argIdx= 0;
-        String cmd = args[argIdx++];
-
-        if ("execute".equals(cmd)) {
-            long loanId = Long.valueOf(args[argIdx++]);
-            double amount = Double.valueOf(args[argIdx++]);
-
-            Long portfolioId = null;
-            if (args.length >= 4)
-                portfolioId = Long.valueOf(args[argIdx++]);
-
-            Order order = new Order();
+        try
             {
-                order.setLoanId(loanId);
-                order.setRequestedAmount(amount);
-                order.setPortfolioId(portfolioId);
-            }
+            int argIdx = 0;
+            String cmd = args[argIdx++];
 
-            com.rp.p2p.order_executor.OrderExecutor orderExecutor = new com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor();
-            orderExecutor.order(Collections.singleton(order));
+            if ("execute".equals(cmd)) {
+                long loanId = Long.valueOf(args[argIdx++]);
+                double amount = Double.valueOf(args[argIdx++]);
+
+                Long portfolioId = null;
+                if (args.length >= 4)
+                    portfolioId = Long.valueOf(args[argIdx++]);
+
+                Order order = new Order();
+                {
+                    order.setLoanId(loanId);
+                    order.setRequestedAmount(amount);
+                    order.setPortfolioId(portfolioId);
+                }
+
+                com.rp.p2p.order_executor.OrderExecutor orderExecutor = new com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor();
+                orderExecutor.order(Collections.singleton(order));
+            } else if ("getPortfolios".equals(cmd)) {
+                com.rp.p2p.order_executor.OrderExecutor orderExecutor = new OrderExecutor();
+                Map<String, Long> portfolios = orderExecutor.getPortfolios();
+                for (Map.Entry<String, Long> entry : portfolios.entrySet()) {
+                    logger_.info(entry.getKey() + " -> " + entry.getValue());
+                }
+            } else if ("browseLoansResult".equals(cmd)) {
+                OrderExecutor orderExecutor = new OrderExecutor();
+                BrowseLoansResult browseLoansResult = orderExecutor.getBrowseLoansResult();
+
+                for (LoanListing loanListing : browseLoansResult.getLoans()) {
+                    logger_.info(loanListing);
+                }
+            }
         }
-        else if("getPortfolios".equals(cmd))
-        {
-            com.rp.p2p.order_executor.OrderExecutor orderExecutor = new OrderExecutor();
-            Map<String,Long> portfolios = orderExecutor.getPortfolios();
-            for (Map.Entry<String,Long> entry : portfolios.entrySet())
-            {
-                logger_.info(entry.getKey()+" -> "+entry.getValue());
-            }
-        }
-        else if ("browseLoansResult".equals(cmd))
-        {
-            OrderExecutor orderExecutor = new OrderExecutor();
-            BrowseLoansResult browseLoansResult = orderExecutor.getBrowseLoansResult();
-
-            for (LoanListing loanListing : browseLoansResult.getLoans())
-            {
-                logger_.info(loanListing);
-            }
+        finally {
+            HibernateUtil.shutdownAll();
         }
     }
 
