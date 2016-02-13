@@ -78,7 +78,7 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
                 brokenRules++;
             }
-            if (loan.getCreditInfo().getMthsSinceLastDelinq() != null && loan.getCreditInfo().getMthsSinceLastDelinq() > (12*2) )
+            if (loan.getCreditInfo().getMthsSinceLastDelinq() != null && loan.getCreditInfo().getMthsSinceLastDelinq() < (12*2) )
             {
                 logger_.info("Failed loan.getCreditInfo().getMthsSinceLastDelinq() [" +loan.getCreditInfo().getMthsSinceLastDelinq()+ "] " + loan.getId());
                 brokenRules++;
