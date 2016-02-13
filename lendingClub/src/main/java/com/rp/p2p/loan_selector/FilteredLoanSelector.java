@@ -55,10 +55,10 @@ public class FilteredLoanSelector implements LoansSelector
             }
             if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 17.0 )
             {
-                logger_.info("Failed ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
+                logger_.info("Failed ((loan.getLoanAmnt()/loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
                 brokenRules++;
             }
-            if( (loan.getAnnualInc()) < 55000.0 )
+            if( (loan.getAnnualInc()) < 54000.0 )
             {
                 logger_.info("Failed (loan.getAnnualInc()) [" +loan.getAnnualInc() +"] " + loan.getId());
                 brokenRules++;
@@ -78,7 +78,7 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
                 brokenRules++;
             }
-            if (loan.getCreditInfo().getMthsSinceLastDelinq() != null && loan.getCreditInfo().getMthsSinceLastDelinq() > (12*2) )
+            if (loan.getCreditInfo().getMthsSinceLastDelinq() != null && loan.getCreditInfo().getMthsSinceLastDelinq() < (12*2) )
             {
                 logger_.info("Failed loan.getCreditInfo().getMthsSinceLastDelinq() [" +loan.getCreditInfo().getMthsSinceLastDelinq()+ "] " + loan.getId());
                 brokenRules++;
