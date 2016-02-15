@@ -2,6 +2,8 @@ package com.rp.p2p.loan.dynamo;
 
 
 import com.rp.p2p.model.BrowseLoansResult;
+import com.rp.p2p.model.CreditInfo;
+import com.rp.p2p.model.IncomeVerification;
 import com.rp.p2p.model.LoanListing;
 import junit.framework.TestCase;
 
@@ -17,18 +19,24 @@ public class BrowseLoansResultDaoTest extends TestCase {
         int id = 1;
         {
             LoanListing ll = new LoanListing();
+            ll.setCreditInfo(new CreditInfo());
+            ll.setIsIncV(IncomeVerification.SOURCE_VERIFIED);
             ll.setId(id++);
 
             loanListingList.add(ll);
         }
         {
             LoanListing ll = new LoanListing();
+            ll.setCreditInfo(new CreditInfo());
+            ll.setIsIncV(IncomeVerification.SOURCE_VERIFIED);
             ll.setId(id++);
 
             loanListingList.add(ll);
         }
         {
             LoanListing ll = new LoanListing();
+            ll.setCreditInfo(new CreditInfo());
+            ll.setIsIncV(IncomeVerification.SOURCE_VERIFIED);
             ll.setId(id++);
 
             loanListingList.add(ll);

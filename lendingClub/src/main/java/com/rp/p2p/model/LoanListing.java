@@ -79,6 +79,7 @@ public class LoanListing {
 
     @XmlElement(required = true)
     @Embedded
+    @DynamoDBAttribute(attributeName="creditInfo")
     protected CreditInfo creditInfo;
     @Id
     @XmlAttribute(name = "id", required = true)

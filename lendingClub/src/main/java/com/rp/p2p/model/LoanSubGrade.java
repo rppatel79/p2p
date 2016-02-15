@@ -1,6 +1,8 @@
 
 package com.rp.p2p.model;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -56,6 +58,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "LoanSubGrade")
 @XmlEnum
+@DynamoDBDocument
 public enum LoanSubGrade {
 
     @XmlEnumValue("A1")

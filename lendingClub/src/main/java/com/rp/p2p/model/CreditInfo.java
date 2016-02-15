@@ -1,6 +1,10 @@
 
 package com.rp.p2p.model;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -87,120 +91,177 @@ import java.util.Date;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreditInfo")
+@DynamoDBDocument
 public class CreditInfo {
 
     @XmlAttribute(name = "accNowDelinq")
+    @DynamoDBAttribute(attributeName="accNowDelinq")
     protected Integer accNowDelinq;
     @XmlAttribute(name = "accOpenPast24Mths")
+    @DynamoDBAttribute(attributeName="accOpenPast24Mths")
     protected Integer accOpenPast24Mths;
     @XmlAttribute(name = "bcOpenToBuy")
+    @DynamoDBAttribute(attributeName="bcOpenToBuy")
     protected Double bcOpenToBuy;
     @XmlAttribute(name = "percentBcGt75")
+    @DynamoDBAttribute(attributeName="percentBcGt75")
     protected Double percentBcGt75;
     @XmlAttribute(name = "bcUtil")
+    @DynamoDBAttribute(attributeName="bcUtil")
     protected Double bcUtil;
     @XmlAttribute(name = "dti")
+    @DynamoDBAttribute(attributeName="dti")
     protected Double dti;
     @XmlAttribute(name = "delinq2Yrs")
+    @DynamoDBAttribute(attributeName="delinq2Yrs")
     protected Integer delinq2Yrs;
     @XmlAttribute(name = "delinqAmnt")
+    @DynamoDBAttribute(attributeName="delinqAmnt")
     protected Double delinqAmnt;
     @XmlAttribute(name = "earliestCrLine")
     @XmlSchemaType(name = "dateTime")
+    @DynamoDBAttribute(attributeName="earliestCrLine")
     protected Date earliestCrLine;
     @XmlAttribute(name = "ficoRangeLow")
+    @DynamoDBAttribute(attributeName="ficoRangeLow")
     protected Integer ficoRangeLow;
     @XmlAttribute(name = "ficoRangeHigh")
+    @DynamoDBAttribute(attributeName="ficoRangeHigh")
     protected Integer ficoRangeHigh;
     @XmlAttribute(name = "inqLast6Mths")
+    @DynamoDBAttribute(attributeName="inqLast6Mths")
     protected Integer inqLast6Mths;
     @XmlAttribute(name = "mthsSinceLastDelinq")
+    @DynamoDBAttribute(attributeName="mthsSinceLastDelinq")
     protected Integer mthsSinceLastDelinq;
     @XmlAttribute(name = "mthsSinceLastRecord")
+    @DynamoDBAttribute(attributeName="mthsSinceLastRecord")
     protected Integer mthsSinceLastRecord;
     @XmlAttribute(name = "mthsSinceRecentInq")
+    @DynamoDBAttribute(attributeName="mthsSinceRecentInq")
     protected Integer mthsSinceRecentInq;
     @XmlAttribute(name = "mthsSinceRecentRevolDelinq")
+    @DynamoDBAttribute(attributeName="mthsSinceRecentRevolDelinq")
     protected Integer mthsSinceRecentRevolDelinq;
     @XmlAttribute(name = "mthsSinceRecentBc")
+    @DynamoDBAttribute(attributeName="mthsSinceRecentBc")
     protected Integer mthsSinceRecentBc;
     @XmlAttribute(name = "mortAcc")
+    @DynamoDBAttribute(attributeName="mortAcc")
     protected Integer mortAcc;
     @XmlAttribute(name = "openAcc")
+    @DynamoDBAttribute(attributeName="openAcc")
     protected Integer openAcc;
     @XmlAttribute(name = "pubRec")
+    @DynamoDBAttribute(attributeName="pubRec")
     protected Integer pubRec;
     @XmlAttribute(name = "totalBalExMort")
+    @DynamoDBAttribute(attributeName="totalBalExMort")
     protected Double totalBalExMort;
     @XmlAttribute(name = "revolBal")
+    @DynamoDBAttribute(attributeName="revolBal")
     protected Double revolBal;
     @XmlAttribute(name = "revolUtil")
+    @DynamoDBAttribute(attributeName="revolUtil")
     protected Double revolUtil;
     @XmlAttribute(name = "totalBcLimit")
+    @DynamoDBAttribute(attributeName="totalBcLimit")
     protected Double totalBcLimit;
     @XmlAttribute(name = "totalAcc")
+    @DynamoDBAttribute(attributeName="totalAcc")
     protected Integer totalAcc;
     @XmlAttribute(name = "totalIlHighCreditLimit")
+    @DynamoDBAttribute(attributeName="totalIlHighCreditLimit")
     protected Integer totalIlHighCreditLimit;
     @XmlAttribute(name = "numRevAccts")
+    @DynamoDBAttribute(attributeName="numRevAccts")
     protected Integer numRevAccts;
     @XmlAttribute(name = "mthsSinceRecentBcDlq")
+    @DynamoDBAttribute(attributeName="mthsSinceRecentBcDlq")
     protected Integer mthsSinceRecentBcDlq;
     @XmlAttribute(name = "pubRecBankruptcies")
+    @DynamoDBAttribute(attributeName="pubRecBankruptcies")
     protected Integer pubRecBankruptcies;
     @XmlAttribute(name = "numAcctsEver120Ppd")
+    @DynamoDBAttribute(attributeName="numAcctsEver120Ppd")
     protected Integer numAcctsEver120Ppd;
     @XmlAttribute(name = "chargeoffWithin12Mths")
+    @DynamoDBAttribute(attributeName="chargeoffWithin12Mths")
     protected Integer chargeoffWithin12Mths;
     @XmlAttribute(name = "collections12MthsExMed")
+    @DynamoDBAttribute(attributeName="collections12MthsExMed")
     protected Integer collections12MthsExMed;
     @XmlAttribute(name = "taxLiens")
+    @DynamoDBAttribute(attributeName="taxLiens")
     protected Integer taxLiens;
     @XmlAttribute(name = "mthsSinceLastMajorDerog")
+    @DynamoDBAttribute(attributeName="mthsSinceLastMajorDerog")
     protected Integer mthsSinceLastMajorDerog;
     @XmlAttribute(name = "numSats")
+    @DynamoDBAttribute(attributeName="numSats")
     protected Integer numSats;
     @XmlAttribute(name = "numTlOpPast12m")
+    @DynamoDBAttribute(attributeName="numTlOpPast12M")
     protected Integer numTlOpPast12M;
     @XmlAttribute(name = "moSinRcntTl")
+    @DynamoDBAttribute(attributeName="moSinRcntTl")
     protected Integer moSinRcntTl;
     @XmlAttribute(name = "totHiCredLim")
+    @DynamoDBAttribute(attributeName="totHiCredLim")
     protected Integer totHiCredLim;
     @XmlAttribute(name = "totCurBal")
+    @DynamoDBAttribute(attributeName="totCurBal")
     protected Integer totCurBal;
     @XmlAttribute(name = "avgCurBal")
+    @DynamoDBAttribute(attributeName="avgCurBal")
     protected Integer avgCurBal;
     @XmlAttribute(name = "numBcTl")
+    @DynamoDBAttribute(attributeName="numBcTl")
     protected Integer numBcTl;
     @XmlAttribute(name = "numActvBcTl")
+    @DynamoDBAttribute(attributeName="numActvBcTl")
     protected Integer numActvBcTl;
     @XmlAttribute(name = "numBcSats")
+    @DynamoDBAttribute(attributeName="numBcSats")
     protected Integer numBcSats;
     @XmlAttribute(name = "pctTlNvrDlq")
+    @DynamoDBAttribute(attributeName="pctTlNvrDlq")
     protected Integer pctTlNvrDlq;
     @XmlAttribute(name = "numTl90gDpd24m")
+    @DynamoDBAttribute(attributeName="numTl90GDpd24M")
     protected Integer numTl90GDpd24M;
     @XmlAttribute(name = "numTl30dpd")
+    @DynamoDBAttribute(attributeName="numTl30Dpd")
     protected Integer numTl30Dpd;
     @XmlAttribute(name = "numTl120dpd2m")
+    @DynamoDBAttribute(attributeName="numTl120Dpd2M")
     protected Integer numTl120Dpd2M;
     @XmlAttribute(name = "numIlTl")
+    @DynamoDBAttribute(attributeName="numIlTl")
     protected Integer numIlTl;
     @XmlAttribute(name = "moSinOldIlAcct")
+    @DynamoDBAttribute(attributeName="moSinOldIlAcct")
     protected Integer moSinOldIlAcct;
     @XmlAttribute(name = "numActvRevTl")
+    @DynamoDBAttribute(attributeName="numActvRevTl")
     protected Integer numActvRevTl;
     @XmlAttribute(name = "moSinOldRevTlOp")
+    @DynamoDBAttribute(attributeName="moSinOldRevTlOp")
     protected Integer moSinOldRevTlOp;
     @XmlAttribute(name = "moSinRcntRevTlOp")
+    @DynamoDBAttribute(attributeName="moSinRcntRevTlOp")
     protected Integer moSinRcntRevTlOp;
     @XmlAttribute(name = "totalRevHiLim")
+    @DynamoDBAttribute(attributeName="totalRevHiLim")
     protected Integer totalRevHiLim;
     @XmlAttribute(name = "numRevTlBalGt0")
+    @DynamoDBAttribute(attributeName="numRevTlBalGt0")
     protected Integer numRevTlBalGt0;
     @XmlAttribute(name = "numOpRevTl")
+    @DynamoDBAttribute(attributeName="numOpRevTl")
     protected Integer numOpRevTl;
     @XmlAttribute(name = "totCollAmt")
+    @DynamoDBAttribute(attributeName="totCollAmt")
     protected Integer totCollAmt;
 
     /**
