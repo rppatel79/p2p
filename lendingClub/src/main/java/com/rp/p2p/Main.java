@@ -1,7 +1,6 @@
 package com.rp.p2p;
 
 import com.rp.p2p.analytics.P2pPicksApi;
-import com.rp.p2p.loan.db.BrowseLoansResultDao;
 import com.rp.p2p.loan_selector.FilteredLoanSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.model.*;
@@ -62,7 +61,10 @@ public class Main
 
             logger_.info("Executing [" + sourceType + "] with execute [" + execute + "]");
 
-            final DbOriginatorApi originatorApi = new DbOriginatorApi(new LendingClubApi(),new BrowseLoansResultDao());
+            final DbOriginatorApi originatorApi = new DbOriginatorApi(new LendingClubApi()
+                    ,new HashSet<com.rp.p2p.loan.BrowseLoansResultDao>(
+                        Arrays.asList(new com.rp.p2p.loan.BrowseLoansResultDao[]{new com.rp.p2p.loan.db.BrowseLoansResultDao(),
+                                                                new com.rp.p2p.loan.dynamo.BrowseLoansResultDao()})));
             Map<String, Long> portfolioNameToId = getPortfolios(originatorApi);
 
             List<LoanListing> toOrder;
