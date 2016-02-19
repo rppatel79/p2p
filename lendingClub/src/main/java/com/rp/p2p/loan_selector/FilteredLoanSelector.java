@@ -37,6 +37,7 @@ public class FilteredLoanSelector implements LoansSelector
     private Set<Integer> VALID_TERM = new HashSet<Integer>();
     {
         VALID_TERM.add(36);
+        VALID_TERM.add(60);
     }
 
     @Override
