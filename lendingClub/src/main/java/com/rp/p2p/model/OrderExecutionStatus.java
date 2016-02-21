@@ -66,7 +66,8 @@ public enum OrderExecutionStatus {
     SYSTEM_BUSY,
     TEMPORARILY_UNAVAILABLE,
     NOT_AN_IN_FUNDING_LOAN,
-    REQUESTED_AMOUNT_ROUNDED;
+    REQUESTED_AMOUNT_ROUNDED,
+    LOAN_AMOUNT_EXCEEDED;
 
     public String value() {
         return name();
