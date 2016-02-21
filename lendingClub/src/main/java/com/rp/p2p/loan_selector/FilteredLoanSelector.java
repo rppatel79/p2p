@@ -25,6 +25,7 @@ public class FilteredLoanSelector implements LoansSelector
     {
         VALID_LOAN_PURPOSE.add(LoanPurpose.CREDIT_CARD);
         VALID_LOAN_PURPOSE.add(LoanPurpose.DEBT_CONSOLIDATION);
+        VALID_LOAN_PURPOSE.add(LoanPurpose.HOME_IMPROVEMENT);
     }
 
     private Set<LoanGrade> VALID_GRADE = new HashSet<LoanGrade>();
