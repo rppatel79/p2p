@@ -32,6 +32,7 @@ public class FilteredLoanSelector implements LoansSelector
         VALID_GRADE.add(LoanGrade.A);
         VALID_GRADE.add(LoanGrade.B);
         VALID_GRADE.add(LoanGrade.C);
+        VALID_GRADE.add(LoanGrade.D);
     }
 
     private Set<Integer> VALID_TERM = new HashSet<Integer>();
