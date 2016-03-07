@@ -226,7 +226,7 @@ public class LendingClubApi implements OriginatorApi
             loan.setInvestorCount(IntegerValueOf(loans.get("investorCount")));
             //loan.setIlsExpD(loans.get("ilsExpD"));
             loan.setInitialListStatus(loans.get("initialListStatus"));
-            loan.setEmpTitle(loans.get("empTitle"));
+            loan.setEmpTitle(StringValueOf(loans.get("empTitle")));
             loan.setCreditInfo(new CreditInfo());
             loan.getCreditInfo().setAccNowDelinq(IntegerValueOf(loans.get("accNowDelinq")));
             loan.getCreditInfo().setAccOpenPast24Mths(Integer.valueOf(loans.get("accOpenPast24Mths")));
@@ -297,6 +297,14 @@ public class LendingClubApi implements OriginatorApi
         else {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
             return formatter.parse(value);
+        }
+    }
+
+    private final static String StringValueOf(String value){
+        if (value == null || "null".equals(value) || value.isEmpty() || "N/A".equalsIgnoreCase(value))
+            return null;
+        else {
+            return value;
         }
     }
 

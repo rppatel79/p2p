@@ -13,6 +13,7 @@ public class FilteredLoanSelector implements LoansSelector
     {
         VALID_HOMEOWNERSHIP.add(HomeOwnership.RENT);
         VALID_HOMEOWNERSHIP.add(HomeOwnership.MORTGAGE);
+        VALID_HOMEOWNERSHIP.add(HomeOwnership.OWN);//Is this okay?
     }
 
     private Set<IncomeVerification> VALID_INCOME_VERIFICATION = new HashSet<IncomeVerification>();
@@ -25,7 +26,7 @@ public class FilteredLoanSelector implements LoansSelector
     {
         VALID_LOAN_PURPOSE.add(LoanPurpose.CREDIT_CARD);
         VALID_LOAN_PURPOSE.add(LoanPurpose.DEBT_CONSOLIDATION);
-        VALID_LOAN_PURPOSE.add(LoanPurpose.HOME_IMPROVEMENT);
+        VALID_LOAN_PURPOSE.add(LoanPurpose.HOME_IMPROVEMENT);//Is this okay?
     }
 
     private Set<LoanGrade> VALID_GRADE = new HashSet<LoanGrade>();
@@ -71,7 +72,7 @@ public class FilteredLoanSelector implements LoansSelector
                 logger_.info("Failed VALID_TERM [" +loan.getTerm()+ "] " + loan.getId());
                 brokenRules++;
             }
-            if (loan.getEmpTitle() == null || "N/A".equalsIgnoreCase(loan.getEmpTitle()))
+            if (loan.getEmpTitle() == null )
             {
                 logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
                 brokenRules++;
