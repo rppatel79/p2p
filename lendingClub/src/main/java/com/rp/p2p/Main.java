@@ -4,6 +4,7 @@ import com.rp.p2p.analytics.P2pPicksApi;
 import com.rp.p2p.loan_selector.FilteredLoansSelector;
 import com.rp.p2p.loan_selector.InCodeLoansSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
+import com.rp.p2p.loan_selector.RhinoLoanSelector;
 import com.rp.p2p.model.*;
 import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
 import com.rp.p2p.originator.DbOriginatorApi;
@@ -71,7 +72,7 @@ public class Main
             List<LoanListing> toOrder;
             if (SourceType.filterSource == sourceType) {
                 BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
-                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new InCodeLoansSelector());
+                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new RhinoLoanSelector("filterLoanSelector.js"));
                 toOrder = filteredLoansSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
             } else {
                 P2pPicksApi p2pPicksApi = new P2pPicksApi();
