@@ -76,7 +76,7 @@ if((loan.getIntRate() +5.0 )< (loan.getExpDefaultRate()+loan.getServiceFeeRate()
 	logger_.info("Failed MIN_INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
 	brokenRules++;
 }
-if (allInvestedLoans.contains(loan.getId()))
+if (allInvestedLoans.contains(new java.lang.Long(loan.getId())))//unsure why I need to wrap this as a Long, but if I don't rhino is converting to a double
 {
 	logger_.info("Failed allInvestedLoans.contains(loan.getId())" + " " + loan.getId());
 	brokenRules++;
