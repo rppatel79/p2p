@@ -13,26 +13,6 @@ public class BrowseLoansResultDao implements com.rp.p2p.loan.BrowseLoansResultDa
 
     @Override
     public void save(BrowseLoansResult browseLoansResult) {
-
-        SessionFactory sessionFactory = null;
-        Session session =null;
-        try {
-            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
-            session = sessionFactory.openSession();
-            for (LoanListing loanListing : browseLoansResult.getLoans()) {
-                session.merge(loanListing);
-            }
-            session.flush();
-        }
-        catch(Exception ex)
-        {
-            logger_.warn("Unable to save loan.  Continuing without failing",ex);
-        }
-        finally
-        {
-            if (session != null )
-                session.close();
-        }
-
+        (new LoanDao()).loadAll();
     }
 }

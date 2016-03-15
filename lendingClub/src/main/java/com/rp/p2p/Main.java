@@ -1,7 +1,8 @@
 package com.rp.p2p;
 
 import com.rp.p2p.analytics.P2pPicksApi;
-import com.rp.p2p.loan_selector.FilteredLoanSelector;
+import com.rp.p2p.loan_selector.FilteredLoansSelector;
+import com.rp.p2p.loan_selector.InCodeLoansSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.model.*;
 import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
@@ -70,8 +71,8 @@ public class Main
             List<LoanListing> toOrder;
             if (SourceType.filterSource == sourceType) {
                 BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
-                FilteredLoanSelector filteredLoanSelector = new FilteredLoanSelector();
-                toOrder = filteredLoanSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
+                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new InCodeLoansSelector());
+                toOrder = filteredLoansSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
             } else {
                 P2pPicksApi p2pPicksApi = new P2pPicksApi();
                 P2pPicksApi.PicksResponse picksResponse = p2pPicksApi.list(null, "profit-maximizer");
