@@ -26,7 +26,7 @@ public class ValidateSelector extends TestCase
         //List<LoanListing> loanListingList = loanDao.load(Collections.singletonList(68053175L));
         List<LoanListing> loanListingList = loanDao.loadAll();
         LoanSelector[] loanSelectors = {(LoanSelector) new InCodeLoansSelector()
-                ,(LoanSelector)new RhinoLoanSelector()};
+                ,(LoanSelector)new RhinoLoanSelector("filterLoanSelector.js")};
 
         Set<Long> allInvestedLoans = new HashSet<Long>();
         for (LoanListing ll : loanListingList)
