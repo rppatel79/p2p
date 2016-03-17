@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.ObjDoubleConsumer;
 
 public class ApplicationProperties
 {
