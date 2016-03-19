@@ -13,6 +13,6 @@ public class BrowseLoansResultDao implements com.rp.p2p.loan.BrowseLoansResultDa
 
     @Override
     public void save(BrowseLoansResult browseLoansResult) {
-        (new LoanDao()).loadAll();
+        (new LoanDao()).save(browseLoansResult.getLoans());
     }
 }

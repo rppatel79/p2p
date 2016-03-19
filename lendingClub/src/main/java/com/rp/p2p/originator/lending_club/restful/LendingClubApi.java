@@ -208,15 +208,11 @@ public class LendingClubApi implements OriginatorApi
             loan.setAnnualInc(Double.valueOf(loans.get("annualInc")));
             loan.setIsIncV("null".equals(loans.get("isIncV"))? null : IncomeVerification.valueOf(loans.get("isIncV")));
 
-            /*
-            loan.setAcceptD(loans.get("acceptD"));
-                    loan.setExpD(loans.get("expD"));
-                    loan.setListD(loans.get("listD"));
-                    loan.setCreditPullD(loans.get("creditPullD"));
-                    loan.setReviewStatusD(loans.get("reviewStatusD"));
-            */
-
-
+            loan.setAcceptD(DateValueOf(loans.get("acceptD")));
+            loan.setExpD(DateValueOf(loans.get("expD")));
+            loan.setListD(DateValueOf(loans.get("listD")));
+            loan.setCreditPullD(DateValueOf(loans.get("creditPullD")));
+            loan.setReviewStatusD(DateValueOf(loans.get("reviewStatusD")));
 
             loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus")));
             loan.setDescription(loans.get("description"));
@@ -224,7 +220,7 @@ public class LendingClubApi implements OriginatorApi
             //loan.setAddrZip(loans.get("addrZip"));
             loan.setAddrState(loans.get("addrState"));
             loan.setInvestorCount(IntegerValueOf(loans.get("investorCount")));
-            //loan.setIlsExpD(loans.get("ilsExpD"));
+            loan.setIlsExpD(DateValueOf(loans.get("ilsExpD")));
             loan.setInitialListStatus(loans.get("initialListStatus"));
             loan.setEmpTitle(StringValueOf(loans.get("empTitle")));
             loan.setCreditInfo(new CreditInfo());
@@ -236,7 +232,7 @@ public class LendingClubApi implements OriginatorApi
             loan.getCreditInfo().setDti(Double.valueOf(loans.get("dti")));//:0.0,
             loan.getCreditInfo().setDelinq2Yrs(Integer.valueOf(loans.get("delinq2Yrs")));//:1,
             loan.getCreditInfo().setDelinqAmnt(Double.valueOf(loans.get("delinqAmnt")));//:0.0,
-            //loan.getCreditInfo().setEarliestCrLine(loans.get("earliestCrLine"));//:"1984-09-15T00:00:00.000-07:00",
+            loan.getCreditInfo().setEarliestCrLine(DateValueOf(loans.get("earliestCrLine")));//:"1984-09-15T00:00:00.000-07:00",
             loan.getCreditInfo().setFicoRangeLow(Integer.valueOf(loans.get("ficoRangeLow")));//:750,
             loan.getCreditInfo().setFicoRangeHigh(Integer.valueOf(loans.get("ficoRangeHigh")));//:754,
             loan.getCreditInfo().setInqLast6Mths(IntegerValueOf(loans.get("inqLast6Mths")));//:0,
@@ -291,12 +287,19 @@ public class LendingClubApi implements OriginatorApi
         return browseLoansResult;
     }
 
-    private final static Date DateValueOf(String value) throws ParseException {
-        if ("null".equals(value) )
+    private final static Date DateValueOf(String value) {
+        if (value == null || "null".equals(value) )
             return null;
         else {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            return formatter.parse(value);
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                return formatter.parse(value);
+            }
+            catch(ParseException ex)
+            {
+                logger_.warn("Unable to parse date.  Returning null and continuing",ex);
+                return null;
+            }
         }
     }
 
