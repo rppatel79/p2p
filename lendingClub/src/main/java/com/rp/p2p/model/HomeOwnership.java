@@ -33,7 +33,8 @@ public enum HomeOwnership {
     RENT,
     MORTGAGE,
     ANY,
-    OTHER;
+    OTHER,
+    NONE;
 
     public String value() {
         return name();
