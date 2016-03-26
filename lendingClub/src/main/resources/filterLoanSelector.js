@@ -11,7 +11,7 @@ if (VALID_HOMEOWNERSHIP.indexOf(loan.getHomeOwnership())<0)
 	logger_.info("Failed VALID_HOMEOWNERSHIP [" +loan.getHomeOwnership()+ "] " + loan.getId());
 	brokenRules++;
 }
-if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 17.0 )
+if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 18.0 )
 {
 	logger_.info("Failed ((loan.getLoanAmnt()/loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
 	brokenRules++;
