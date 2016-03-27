@@ -72,7 +72,7 @@ public class Main
             List<LoanListing> toOrder;
             if (SourceType.filterSource == sourceType) {
                 BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
-                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new RhinoLoanSelector("filterLoanSelector.js"));
+                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new RhinoLoanSelector(RhinoLoanSelector.SCRIPT_FILTER_LOAN_SELECTOR));
                 toOrder = filteredLoansSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
             } else {
                 P2pPicksApi p2pPicksApi = new P2pPicksApi();

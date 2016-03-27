@@ -11,9 +11,10 @@ import org.hibernate.SessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoanDao {
+public class LoanDao implements com.rp.p2p.loan.LoanDao {
     private final static Logger logger_ = Logger.getLogger(LoanDao.class);
 
+    @Override
     public void save(List<LoanListing> loans)
     {
         SessionFactory sessionFactory = null;
@@ -37,6 +38,7 @@ public class LoanDao {
         }
     }
 
+    @Override
     public List<LoanListing> loadAll()
     {
         SessionFactory sessionFactory = null;
@@ -45,6 +47,9 @@ public class LoanDao {
             sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
             session = sessionFactory.openSession();
             Criteria criteria = session.createCriteria(LoanListing.class);
+            criteria.setReadOnly(true);
+            //criteria.setMaxResults(1000);
+            //criteria.setFirstResult(1000);
             return criteria.list();
         }
         finally
@@ -54,6 +59,7 @@ public class LoanDao {
         }
     }
 
+    @Override
     public List<LoanListing> load(List<Long> loanIds) {
         SessionFactory sessionFactory = null;
         Session session =null;

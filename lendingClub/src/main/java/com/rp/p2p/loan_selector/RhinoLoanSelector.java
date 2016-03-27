@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class RhinoLoanSelector implements LoanSelector
 {
+    public static final String SCRIPT_FILTER_LOAN_SELECTOR="filterLoanSelector.js";
     private final String scriptName_ ;
 
     public RhinoLoanSelector(String scriptName) {
