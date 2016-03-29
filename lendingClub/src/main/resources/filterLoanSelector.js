@@ -81,6 +81,21 @@ if (allInvestedLoans.contains(new java.lang.Long(loan.getId())))//unsure why I n
 	logger_.info("Failed allInvestedLoans.contains(loan.getId())" + " " + loan.getId());
 	brokenRules++;
 }
+if (loan.getCreditInfo().getInqLast6Mths() != null && loan.getCreditInfo().getInqLast6Mths() > 3)
+{
+	logger_.info("Failed loan.getCreditInfo().getInqLast6Mths() [" +loan.getCreditInfo().getInqLast6Mths()+ "] " + loan.getId());
+	brokenRules++;
+}
+if (loan.getCreditInfo().getAccOpenPast24Mths() != null && loan.getCreditInfo().getAccOpenPast24Mths() > 10)
+{
+	logger_.info("Failed loan.getCreditInfo().getAccOpenPast24Mths() [" +loan.getCreditInfo().getAccOpenPast24Mths()+ "] " + loan.getId());
+	brokenRules++;
+}
+if (loan.getCreditInfo().getMthsSinceRecentBc() != null && loan.getCreditInfo().getMthsSinceRecentBc() > 20)
+{
+	logger_.info("Failed loan.getCreditInfo().getMthsSinceRecentBc() [" +loan.getCreditInfo().getMthsSinceRecentBc()+ "] " + loan.getId());
+	brokenRules++;
+}
 if (brokenRules > 0)
 {
 	logger_.info("Loan ["+loan.getId()+"] broke ["+brokenRules+"] rules");
