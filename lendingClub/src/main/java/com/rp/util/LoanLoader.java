@@ -2,6 +2,7 @@ package com.rp.util;
 
 import com.rp.p2p.loan.BrowseLoansResultDao;
 import com.rp.p2p.model.*;
+import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -200,20 +201,24 @@ public class LoanLoader {
 
 
     public static void main(String args[]) throws IOException {
-        if(args.length < 2)
-            usage();
-        else
-        {
-            String fileStr = args[0];
-            boolean save = args.length==2? Boolean.parseBoolean(args[1]) : false;
-            File inputFile = new File(fileStr);
-            if (!inputFile.exists() || !inputFile.canRead())
-            {
-                logger_.info("Invalid file:"+inputFile.getAbsolutePath());
-                return;
-            }
+        try {
+            if (args.length < 2)
+                usage();
+            else {
+                String fileStr = args[0];
+                boolean save = args.length == 2 ? Boolean.parseBoolean(args[1]) : false;
+                File inputFile = new File(fileStr);
+                if (!inputFile.exists() || !inputFile.canRead()) {
+                    logger_.info("Invalid file:" + inputFile.getAbsolutePath());
+                    return;
+                }
 
-            new LoanLoader().load(inputFile,save);
+                new LoanLoader().load(inputFile, save);
+            }
+        }
+        finally
+        {
+            HibernateUtil.shutdownAll();
         }
     }
 
