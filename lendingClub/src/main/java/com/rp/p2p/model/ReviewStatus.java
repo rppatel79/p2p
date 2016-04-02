@@ -35,6 +35,7 @@ public enum ReviewStatus {
     LATE_16_30,
     LATE_31_120,
     DEFAULT,
+    ISSUED,
     CHARGED_OFF;
 
     public String value() {
