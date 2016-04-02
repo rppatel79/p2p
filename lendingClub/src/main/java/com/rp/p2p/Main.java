@@ -273,7 +273,7 @@ public class Main
                 LoanListing loanListing = loanListingMap.get(confirmation.getLoanId());
 
                 builder.append("<TR>");
-                builder.append("<TD>").append(confirmation.getLoanId()).append("</TD>");
+                builder.append("<TD>").append("<a href=\"").append(loanListing.getUrl()).append("\">").append(confirmation.getLoanId()).append("</a>").append("</TD>");
                 builder.append("<TD>").append(confirmation.getInvestedAmount()).append("</TD>");
                 builder.append("<TD>").append(confirmation.getExecutionStatus()).append("</TD>");
 
