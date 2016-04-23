@@ -16,7 +16,7 @@ if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 18.0 )
 	logger_.info("Failed ((loan.getLoanAmnt()/loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
 	brokenRules++;
 }
-if( (loan.getAnnualInc()) < 54000.0 )
+if( (loan.getAnnualInc()) < 53500.0 )
 {
 	logger_.info("Failed (loan.getAnnualInc()) [" +loan.getAnnualInc() +"] " + loan.getId());
 	brokenRules++;
