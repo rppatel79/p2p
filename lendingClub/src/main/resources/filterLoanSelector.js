@@ -2,7 +2,7 @@
 var VALID_HOMEOWNERSHIP = [com.rp.p2p.model.HomeOwnership.RENT, com.rp.p2p.model.HomeOwnership.MORTGAGE, com.rp.p2p.model.HomeOwnership.OWN];
 var VALID_INCOME_VERIFICATION = [com.rp.p2p.model.IncomeVerification.SOURCE_VERIFIED,com.rp.p2p.model.IncomeVerification.VERIFIED];
 var VALID_LOAN_PURPOSE = [com.rp.p2p.model.LoanPurpose.CREDIT_CARD,com.rp.p2p.model.LoanPurpose.DEBT_CONSOLIDATION,com.rp.p2p.model.LoanPurpose.HOME_IMPROVEMENT];//Is this okay?
-var VALID_GRADE = [com.rp.p2p.model.LoanGrade.A,com.rp.p2p.model.LoanGrade.B,com.rp.p2p.model.LoanGrade.C,com.rp.p2p.model.LoanGrade.D];
+var VALID_GRADE = [com.rp.p2p.model.LoanGrade.A,com.rp.p2p.model.LoanGrade.B,com.rp.p2p.model.LoanGrade.C];
 var VALID_TERM = [36];
 
 var brokenRules =0;
