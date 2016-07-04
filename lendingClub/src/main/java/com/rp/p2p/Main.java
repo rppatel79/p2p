@@ -21,6 +21,7 @@ import java.util.*;
 
 public class Main
 {
+
     private final static Logger logger_ =Logger.getLogger(Main.class);
 
     public static Map<String, Long> getPortfolios(OriginatorApi originatorApi) {
