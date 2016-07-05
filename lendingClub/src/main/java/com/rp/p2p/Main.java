@@ -27,9 +27,13 @@ public class Main
     public static Map<String, Long> getPortfolios(OriginatorApi originatorApi) {
         //TODO
         //return originatorApi.orderGetPortfolios();
+
+        final Long FILTERSOURCE_PORTFOLIO_ID=36242193L;
+        final Long P2PPICKS_PORTFOLIO_ID=36332059L;
+
         Map<String,Long> ret = new HashMap<String, Long>();
-        ret.put(SourceType.filterSource.getPortfolioName(),36242193L);
-        ret.put(SourceType.P2pPicks.getPortfolioName(),36332059L);
+        ret.put(SourceType.filterSource.getPortfolioName(),FILTERSOURCE_PORTFOLIO_ID);
+        ret.put(SourceType.P2pPicks.getPortfolioName(),P2PPICKS_PORTFOLIO_ID);
 
         return ret;
     }
