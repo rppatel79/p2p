@@ -8,10 +8,19 @@ import java.util.*;
 public class FilteredLoansSelector implements LoansSelector
 {
     private final static Logger logger_ =Logger.getLogger(FilteredLoansSelector.class);
+    private final static int DEFAULT_MAX_LOANS_TO_PURCHASE=3;
+    private final Integer maxLoansToPurchase_;
     private final LoanSelector loanSelector_;
 
-    public FilteredLoansSelector(LoanSelector loanSelector) {
+    public FilteredLoansSelector(LoanSelector loanSelector)
+    {
+        this(loanSelector,DEFAULT_MAX_LOANS_TO_PURCHASE);
+    }
+
+    public FilteredLoansSelector(LoanSelector loanSelector, Integer maxLoansToPurchase) {
+
         loanSelector_ = loanSelector;
+        maxLoansToPurchase_=maxLoansToPurchase;
     }
 
     @Override
@@ -36,8 +45,12 @@ public class FilteredLoansSelector implements LoansSelector
         });
         Collections.reverse(ret);
 
-
-        return ret;
+        if(ret==null)
+            return ret;
+        else
+            return ret.subList(0,Math.min(ret.size(),maxLoansToPurchase_));
     }
 
+    public static void main(String[] args) throws Exception {
+    }
 }
