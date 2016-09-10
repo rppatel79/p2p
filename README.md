@@ -1,6 +1,5 @@
 # p2p
-A standalone java application to invest in [P2P Lending](http://www.shareable.net/blog/an-introduction-to-peer-to-peer-lending) websites.  The framework has been setup multiple P2P originators including  
-[Lending Club](http://www.lendingclub.com) and [Prosper](http://www.prosper.com).  The [Lending Club](http://www.lendingclub.com) implementation is actively used, while the  [Prosper](http://www.prosper.com) implementation is beta.
+A standalone java application to invest in [P2P Lending](http://www.shareable.net/blog/an-introduction-to-peer-to-peer-lending) websites.  The framework has been setup multiple P2P originators including  [Lending Club](http://www.lendingclub.com) and [Prosper](http://www.prosper.com).  The [Lending Club](http://www.lendingclub.com) implementation is actively used, while the  [Prosper](http://www.prosper.com) implementation is beta.
 
 ###Project Setup
 This project leverages various external libraries including:
