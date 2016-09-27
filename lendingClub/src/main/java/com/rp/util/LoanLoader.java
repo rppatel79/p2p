@@ -4,7 +4,6 @@ import com.rp.p2p.loan.BrowseLoansResultDao;
 import com.rp.p2p.model.*;
 import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
-
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,9 +15,9 @@ public class LoanLoader {
     public void load(File inputFile,boolean save) throws IOException {
         BufferedReader reader =null;
 
-        Set<com.rp.p2p.loan.BrowseLoansResultDao> browseLoansResultDaoSet =new HashSet<com.rp.p2p.loan.BrowseLoansResultDao>(
-                Arrays.asList(new com.rp.p2p.loan.BrowseLoansResultDao[]{new com.rp.p2p.loan.db.BrowseLoansResultDao(),
-                        //TODO new com.rp.p2p.loan.dynamo.BrowseLoansResultDao()
+        Set<BrowseLoansResultDao> browseLoansResultDaoSet =new HashSet<BrowseLoansResultDao>(
+                Arrays.asList(new BrowseLoansResultDao[]{new com.rp.p2p.loan.db.BrowseLoansResultDao()
+                        //TODO ,new com.rp.p2p.loan.dynamo.BrowseLoansResultDao()
                 }));
         try
         {

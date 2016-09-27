@@ -1,26 +1,16 @@
 package com.rp.util.dynamodb;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.rp.util.ApplicationProperties;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
-/**
- * Created by RPatel on 2/6/2016.
- */
-public class CreateTablesLoadData {
-
-
-        static String lendingclubLoanlistingTableName = "lendingclub_loanlisting";
+public class CreateTablesLoadData
+{
+    static String lendingclubLoanlistingTableName = "lendingclub_loanlisting";
 
     public static void main(String[] args) throws Exception {
         DynamoDB dynamoDB = new DynamoDB(new AmazonDynamoDBClient(

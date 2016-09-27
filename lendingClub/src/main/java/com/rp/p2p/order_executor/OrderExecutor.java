@@ -13,7 +13,8 @@ public interface OrderExecutor {
     OrderStatus  order(Collection<Order> orders)throws Exception;
 
     Map<String,Long> getPortfolios() throws Exception;
-    public static class OrderStatus
+
+    class OrderStatus
     {
         private final Set<OrderConfirmation> success_;
         private final Set<OrderConfirmation> failed_;

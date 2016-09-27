@@ -3,8 +3,6 @@ package com.rp.p2p;
 import com.rp.p2p.loan.BrowseLoansResultDao;
 import com.rp.p2p.originator.DbOriginatorApi;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
-
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -15,7 +13,7 @@ public class SaveAll {
     public static void main(String[] args) throws Exception {
         final DbOriginatorApi originatorApi = new DbOriginatorApi(new LendingClubApi()
                 ,new HashSet<BrowseLoansResultDao>(
-                Arrays.asList(new com.rp.p2p.loan.BrowseLoansResultDao[]{new com.rp.p2p.loan.db.BrowseLoansResultDao(),
+                Arrays.asList(new BrowseLoansResultDao[]{new com.rp.p2p.loan.db.BrowseLoansResultDao(),
                         new com.rp.p2p.loan.dynamo.BrowseLoansResultDao()})));
         originatorApi.getAndStoreBrowseLoansResult(true);
     }

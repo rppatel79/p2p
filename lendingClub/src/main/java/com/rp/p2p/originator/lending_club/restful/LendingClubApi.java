@@ -166,7 +166,7 @@ public class LendingClubApi implements OriginatorApi
             {
                 ownedNote.setLoanStatus(noteOwned.get("loanStatus"));
                 ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId")));
-                ownedNote.setNoteId((noteOwned.get("noteId")));
+                ownedNote.setNoteId(noteOwned.get("noteId"));
                 ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade")));
                 ownedNote.setLoanAmount(Double.valueOf(noteOwned.get("loanAmount")));
                 ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
@@ -192,7 +192,7 @@ public class LendingClubApi implements OriginatorApi
             LoanListing loan = new LoanListing();
 
             loan.setId(Long.valueOf(loans.get("id")));
-            loan.setMemberId((loans.get("memberId")));
+            loan.setMemberId(loans.get("memberId"));
 
             loan.setLoanAmnt(Double.valueOf(loans.get("loanAmount")));
             loan.setFundedAmnt(Double.valueOf(loans.get("fundedAmount")));
@@ -335,7 +335,7 @@ public class LendingClubApi implements OriginatorApi
                 Map mapPortfolio = portfoliosList.get(i);
                 long id = Long.parseLong((String) mapPortfolio.get("portfolioId"));
                 String name = (String) mapPortfolio.get("portfolioName");
-                String desc = (String) mapPortfolio.get("portfolioDescription");
+                //String desc = (String) mapPortfolio.get("portfolioDescription");
 
                 ret.put(name, id);
             }

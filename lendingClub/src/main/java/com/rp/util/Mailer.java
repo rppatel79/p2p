@@ -51,7 +51,7 @@ public class Mailer {
         Session mailSession = null;
 
         mailSession = Session.getInstance(properties_,
-                new javax.mail.Authenticator() {
+                new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username_, password_);
                     }

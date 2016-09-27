@@ -2,7 +2,6 @@ package com.rp.p2p;
 
 import com.rp.p2p.analytics.P2pPicksApi;
 import com.rp.p2p.loan_selector.FilteredLoansSelector;
-import com.rp.p2p.loan_selector.InCodeLoansSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.loan_selector.RhinoLoanSelector;
 import com.rp.p2p.model.*;
@@ -202,7 +201,7 @@ public class Main
                 }
 
                 if (orders.size() > 0) {
-                    com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
+                    com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus=new OrderExecutor().order(orders);
                     new EmailHelper().sendEmail(sourceType, orderStatus, loanListingMap);
                 }
             }

@@ -2,7 +2,6 @@ package com.rp.p2p.loan_selector;
 
 import com.rp.p2p.model.*;
 import org.apache.log4j.Logger;
-
 import java.util.*;
 
 public class FilteredLoansSelector implements LoansSelector
@@ -45,10 +44,15 @@ public class FilteredLoansSelector implements LoansSelector
         });
         Collections.reverse(ret);
 
-        if(ret==null)
+        if(ret==null) {
+            logger_.trace("Returning no records");
             return ret;
-        else
-            return ret.subList(0,Math.min(ret.size(),maxLoansToPurchase_));
+        }
+        else {
+            List<LoanListing> subList = ret.subList(0, Math.min(ret.size(), maxLoansToPurchase_));
+            logger_.trace("Returning ["+subList.size()+"] records");
+            return subList;
+        }
     }
 
     public static void main(String[] args) throws Exception {

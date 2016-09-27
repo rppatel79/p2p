@@ -1,16 +1,11 @@
 package com.rp.p2p.loan_selector;
 
-import com.rp.p2p.model.CreditInfo;
-import com.rp.p2p.model.HomeOwnership;
 import com.rp.p2p.model.LoanListing;
 import org.apache.log4j.Logger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import java.io.*;
-import java.util.AbstractSet;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class RhinoLoanSelector implements LoanSelector

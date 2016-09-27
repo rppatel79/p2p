@@ -28,7 +28,7 @@ public class DbFactory
         String dbName = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_DB_NAME");
         String hostname = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_HOSTNAME");
         String port = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_PORT");
-        String driverClazz=ApplicationProperties.getInstance().getProperty(db+"."+"RDS_CLASS");
+        //String driverClazz=ApplicationProperties.getInstance().getProperty(db+"."+"RDS_CLASS");
         return "jdbc:mysql://" + hostname + ":" + port + "/" + dbName ;
     }
 
