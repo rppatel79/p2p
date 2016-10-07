@@ -7,7 +7,7 @@ import java.util.*;
 public class FilteredLoansSelector implements LoansSelector
 {
     private final static Logger logger_ =Logger.getLogger(FilteredLoansSelector.class);
-    private final static int DEFAULT_MAX_LOANS_TO_PURCHASE=2;
+    private final static int DEFAULT_MAX_LOANS_TO_PURCHASE=3;
     private final Integer maxLoansToPurchase_;
     private final LoanSelector loanSelector_;
 
