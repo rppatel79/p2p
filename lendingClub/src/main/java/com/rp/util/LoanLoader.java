@@ -205,7 +205,7 @@ public class LoanLoader {
                 usage();
             else {
                 String fileStr = args[0];
-                boolean save = args.length == 2 ? Boolean.parseBoolean(args[1]) : false;
+                boolean save = args.length == 2 && Boolean.parseBoolean(args[1]);
                 File inputFile = new File(fileStr);
                 if (!inputFile.exists() || !inputFile.canRead()) {
                     logger_.info("Invalid file:" + inputFile.getAbsolutePath());
