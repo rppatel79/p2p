@@ -26,7 +26,9 @@ public class BrowseLoansResultDao implements com.rp.p2p.loan.BrowseLoansResultDa
         {
             AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials_);
             DynamoDBMapper mapper = new DynamoDBMapper(client);
+            logger_.info("Starting to save ["+browseLoansResult.getLoans().size()+"]");
             mapper.batchSave(browseLoansResult.getLoans());
+            logger_.info("Completed saving ["+browseLoansResult.getLoans().size()+"]");
         }
         catch(Exception ex)
         {
