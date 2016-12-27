@@ -12,7 +12,7 @@ public class CopyDbToDynamo
         int BATCH_SIZE= 1000;
         int rowCount = 212380;
 
-        int iterations =(rowCount/ BATCH_SIZE) +1;
+        int iterations =rowCount/ BATCH_SIZE +1;
 
         for (int i=0; i < iterations ; i++)
         {
