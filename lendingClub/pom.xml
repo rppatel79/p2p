@@ -196,10 +196,8 @@
                 </executions>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
-                    <!--
                     <minimumTokens>1</minimumTokens>
-                    <targetJdk>1.7</targetJdk>
-                    -->
+                    <targetJdk>1.8</targetJdk>
                 </configuration>
             </plugin>
         </plugins>
