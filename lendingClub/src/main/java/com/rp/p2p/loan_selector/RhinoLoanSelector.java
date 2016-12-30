@@ -11,6 +11,8 @@ import java.util.Set;
 public class RhinoLoanSelector implements LoanSelector
 {
     public static final String SCRIPT_FILTER_LOAN_SELECTOR="filterLoanSelector.js";
+    public static final String SCRIPT_FILTER_LOAN_SELECTOR_PASTOR="pastor.js";
+
     private final String scriptName_ ;
 
     public RhinoLoanSelector(String scriptName) {
@@ -19,12 +21,10 @@ public class RhinoLoanSelector implements LoanSelector
 
     @Override
     public boolean select(final Set<Long> allInvestedLoans, LoanListing ll) throws Exception {
-
-
         Context ctx = Context.enter();
-        try {
-            InputStreamReader in = new InputStreamReader(this.getClass().getClassLoader()
-                    .getResourceAsStream(scriptName_));
+        try (InputStreamReader in = new InputStreamReader(this.getClass().getClassLoader()
+                .getResourceAsStream(scriptName_)))
+        {
             Scriptable scope = ctx.initStandardObjects();
             scope.put("loan", scope, ll);
             scope.put("logger_", scope, Logger.getLogger(scriptName_));
