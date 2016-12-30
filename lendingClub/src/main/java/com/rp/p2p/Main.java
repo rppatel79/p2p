@@ -1,8 +1,6 @@
 package com.rp.p2p;
 
-import com.rp.p2p.analytics.P2pPicksApi;
 import com.rp.p2p.loan_selector.FilteredLoansSelector;
-import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.loan_selector.RhinoLoanSelector;
 import com.rp.p2p.model.*;
 import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
