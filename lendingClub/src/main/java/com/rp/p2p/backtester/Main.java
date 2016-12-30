@@ -4,7 +4,6 @@ import com.rp.p2p.loan.LoanDao;
 import com.rp.p2p.loan_selector.FilteredLoansSelector;
 import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.loan_selector.RhinoLoanSelector;
-import com.rp.p2p.model.CreditInfo;
 import com.rp.p2p.model.LoanListing;
 import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
