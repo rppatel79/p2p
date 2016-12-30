@@ -21,7 +21,7 @@ if (VALID_TERM.indexOf(loan.getTerm())<0)
 	logger_.info("Failed VALID_TERM [" +loan.getTerm()+ "] " + loan.getId());
 	brokenRules++;
 }
-if (!loan.getEmpTitle().toUpperCase().includes("PASTOR") )
+if (loan.getEmpTitle() == null || !loan.getEmpTitle().toUpperCase().includes("PASTOR") )
 {
 	logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
 	brokenRules++;
