@@ -1,7 +1,7 @@
 package com.rp.p2p.originator.prosper.restful;
 
 
-import com.codesnippets4all.json.parsers.JsonParserFactory;
+import com.json.parsers.JsonParserFactory;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
@@ -54,7 +54,7 @@ public class ProsperApi implements OriginatorApi
                 //request.setHeader("amount",""+order.getRequestedAmount());
 
                 JsonParserFactory factory = JsonParserFactory.getInstance();
-                com.codesnippets4all.json.parsers.JSONParser parser = factory.newJsonParser();
+                com.json.parsers.JSONParser parser = factory.newJsonParser();
 
                 Response response = request.execute();
                 HttpResponse httpResponse = response.returnResponse();
