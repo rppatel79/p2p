@@ -54,7 +54,7 @@ public class LendingClubApi implements OriginatorApi
             HttpResponse httpResponse = response.returnResponse();
             String responseStr = EntityUtils.toString(httpResponse.getEntity());
 //            Map d = parser.parseJson(responseStr);
-            HashMap<String,Object> d =
+            Map<String,Object> d =
                     new ObjectMapper().readValue(jsonString, HashMap.class);
 
             List<String> errors = (List<String>)d.get("errors");

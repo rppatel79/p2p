@@ -1,7 +1,8 @@
 package com.rp.p2p.originator.prosper.restful;
 
 
-import com.json.parsers.JsonParserFactory;
+//import com.json.parsers.JsonParserFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
@@ -53,13 +54,10 @@ public class ProsperApi implements OriginatorApi
                 //request.setHeader("listingId",""+order.getLoanId());
                 //request.setHeader("amount",""+order.getRequestedAmount());
 
-                JsonParserFactory factory = JsonParserFactory.getInstance();
-                com.json.parsers.JSONParser parser = factory.newJsonParser();
-
                 Response response = request.execute();
                 HttpResponse httpResponse = response.returnResponse();
                 String responseStr = EntityUtils.toString(httpResponse.getEntity());
-                Map orderConfirmationsMap = parser.parseJson(responseStr);
+                Map<String,Object> orderConfirmationsMap = new ObjectMapper().readValue(responseStr, HashMap.class);
 
                 if (orderConfirmationsMap != null) {
                     OrderConfirmation orderConfirmation = new OrderConfirmation();
