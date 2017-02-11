@@ -1,7 +1,6 @@
 package com.rp.p2p.originator.lending_club.restful;
 
-import com.json.parsers.JSONParser;
-import com.json.parsers.JsonParserFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
@@ -46,13 +45,17 @@ public class LendingClubApi implements OriginatorApi
         Request request = prepareRequest("orders", Type.ACCOUNT_POST);
         String jsonString = createJsonRequestString(orders);
         request.bodyString(jsonString, ContentType.DEFAULT_TEXT);
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
+
+
         try {
             Response response = request.execute();
             HttpResponse httpResponse = response.returnResponse();
             String responseStr = EntityUtils.toString(httpResponse.getEntity());
-            Map d = parser.parseJson(responseStr);
+//            Map d = parser.parseJson(responseStr);
+            HashMap<String,Object> d =
+                    new ObjectMapper().readValue(jsonString, HashMap.class);
 
             List<String> errors = (List<String>)d.get("errors");
             List<Map<String,Object>> orderConfirmationsMap = (List<Map<String,Object>>)d.get("orderConfirmations");
@@ -122,14 +125,15 @@ public class LendingClubApi implements OriginatorApi
     @Override
     public Collection<OwnedNote> getNotesOwned()
     {
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
         Map map;
         try {
-            map = parser.parseJson(prepareRequest("notes", Type.NOTES).execute().returnContent().asStream(), "UTF-8");
-//            if (!map.containsKey("loans")) {
-//                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
-//            }
+            InputStream jsonString = prepareRequest("notes", Type.NOTES).execute().returnContent().asStream();
+//            map = parser.parseJson(prepareRequest("notes", Type.NOTES).execute().returnContent().asStream(), "UTF-8");
+
+            map = new ObjectMapper().readValue(jsonString, HashMap.class);
+
             return convertNotesOwned((List<Map<String, ?>>) map.get("myNotes"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -138,11 +142,14 @@ public class LendingClubApi implements OriginatorApi
 
     @Override
     public BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception {
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
         Map map;
         try {
-            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
+            InputStream jsonString = prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream();
+//            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
+            map = new ObjectMapper().readValue(jsonString, HashMap.class);
+
 //            if (!map.containsKey("loans")) {
 //                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
 //            }
@@ -354,9 +361,11 @@ public class LendingClubApi implements OriginatorApi
     {
         try {
             Request req = prepareRequest("portfolios", Type.ACCOUNT);
-            JsonParserFactory factory = JsonParserFactory.getInstance();
-            JSONParser parser = factory.newJsonParser();
-            Map map = parser.parseJson(executeWithRetry(req), "UTF-8");
+//            JsonParserFactory factory = JsonParserFactory.getInstance();
+//            JSONParser parser = factory.newJsonParser();
+//            Map map = parser.parseJson(executeWithRetry(req), "UTF-8");
+            Map map = new ObjectMapper().readValue(executeWithRetry(req), HashMap.class);
+
             List<Map> portfoliosList = (List<Map>) map.get("myPortfolios");
             Map<String, Long> ret = new HashMap<String, Long>();
             for (int i = 0, size = portfoliosList.size(); i < size; i++) {
