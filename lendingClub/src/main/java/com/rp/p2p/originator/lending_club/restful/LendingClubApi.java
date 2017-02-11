@@ -130,7 +130,7 @@ public class LendingClubApi implements OriginatorApi
 //            if (!map.containsKey("loans")) {
 //                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
 //            }
-            return convertNotesOwned((List<Map<String, String>>) map.get("myNotes"));
+            return convertNotesOwned((List<Map<String, ?>>) map.get("myNotes"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -146,7 +146,7 @@ public class LendingClubApi implements OriginatorApi
 //            if (!map.containsKey("loans")) {
 //                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
 //            }
-            List<Map<String, String>> loansMap = (List<Map<String, String>>) map.get("loans");
+            List<Map<String, ?>> loansMap = (List<Map<String, ?>>) map.get("loans");
             if (loansMap == null) {
                 logger_.warn("Made RESTful request but did not get any results.");
                 return new BrowseLoansResult();//return an empty shell
@@ -158,25 +158,25 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
-    private Collection<OwnedNote> convertNotesOwned(List<Map<String, String>> allNotesOwned) throws ParseException {
+    private Collection<OwnedNote> convertNotesOwned(List<Map<String, ?>> allNotesOwned) throws ParseException {
         Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
-        for (Map<String,String>  noteOwned : allNotesOwned)
+        for (Map<String,?>  noteOwned : allNotesOwned)
         {
             OwnedNote ownedNote = new OwnedNote();
             {
-                ownedNote.setLoanStatus(noteOwned.get("loanStatus"));
-                ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId")));
-                ownedNote.setNoteId(noteOwned.get("noteId"));
-                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade")));
-                ownedNote.setLoanAmount(Double.valueOf(noteOwned.get("loanAmount")));
-                ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
-                ownedNote.setInterestRate(Double.valueOf(noteOwned.get("interestRate")));
-                ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId")));
-                ownedNote.setTerm(Integer.valueOf(noteOwned.get("loanLength")));
+                ownedNote.setLoanStatus(StringValueOf(noteOwned.get("loanStatus")));
+                ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId").toString()));
+                ownedNote.setNoteId(StringValueOf(noteOwned.get("noteId")));
+                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade").toString()));
+                ownedNote.setLoanAmount(DoubleValueOf(noteOwned.get("loanAmount")));
+                ownedNote.setNoteAmount(DoubleValueOf(noteOwned.get("noteAmount")));
+                ownedNote.setInterestRate(DoubleValueOf(noteOwned.get("interestRate")));
+                ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId").toString()));
+                ownedNote.setTerm(IntegerValueOf(noteOwned.get("loanLength")));
                 ownedNote.setIssueDate(DateValueOf(noteOwned.get("issueDate")));
                 ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
                 ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
-                ownedNote.setPaymentsReceived(Double.valueOf(noteOwned.get("paymentsReceived")));
+                ownedNote.setPaymentsReceived(DoubleValueOf(noteOwned.get("paymentsReceived")));
             }
 
             ret.add(ownedNote);
@@ -185,7 +185,7 @@ public class LendingClubApi implements OriginatorApi
         return ret;
     }
 
-    private BrowseLoansResult convertLoans(List<Map<String, String>> allLoans) {
+    private BrowseLoansResult convertLoans(List<Map<String, ?>> allLoans) {
         BrowseLoansResult browseLoansResult = new BrowseLoansResult();
         for (Map<String,?>  loans : allLoans)
         {
