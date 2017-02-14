@@ -63,9 +63,9 @@ public class LendingClubApi implements OriginatorApi
                 List<OrderConfirmation> orderConfirmations = new ArrayList<OrderConfirmation>(orderConfirmationsMap.size());
                 for (Map<String, Object> record : orderConfirmationsMap) {
                     OrderConfirmation orderConfirmation = new OrderConfirmation();
-                    orderConfirmation.setLoanId(Long.valueOf((String)record.get("loanId")));
-                    orderConfirmation.setRequestedAmount(Double.valueOf((String) record.get("requestedAmount")));
-                    orderConfirmation.setInvestedAmount(Double.valueOf((String) record.get("investedAmount")));
+                    orderConfirmation.setLoanId((Integer)record.get("loanId"));
+                    orderConfirmation.setRequestedAmount(Double.valueOf((Double) record.get("requestedAmount")));
+                    orderConfirmation.setInvestedAmount(Double.valueOf((Double) record.get("investedAmount")));
                     List<String> executionStatus = (List<String>) record.get("executionStatus");
                     for (String value : executionStatus) {
                         orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(value));
