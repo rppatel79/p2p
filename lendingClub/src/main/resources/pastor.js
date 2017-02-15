@@ -41,7 +41,7 @@ if (loan.getLoanAmnt() > 40000)
 	logger_.info("Failed loan.getLoanAmnt() [" +loan.getLoanAmnt()+ "] " + loan.getId());
 	brokenRules++;
 }
-if((loan.getIntRate() < 9.7))
+if((loan.getIntRate() < 10.5))
 {
 	logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
 	brokenRules++;
