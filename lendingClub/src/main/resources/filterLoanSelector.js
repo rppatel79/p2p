@@ -66,7 +66,7 @@ if(VALID_GRADE.indexOf(loan.getGrade())<0)
 	logger_.info("Failed VALID_GRADE [" + loan.getGrade()+"] " + loan.getId());
 	brokenRules++;
 }
-if((loan.getIntRate() < 11.0))
+if((loan.getIntRate() < 11.5))
 {
 	logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
 	brokenRules++;
