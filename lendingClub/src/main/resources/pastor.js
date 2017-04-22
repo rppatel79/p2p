@@ -26,7 +26,7 @@ if (loan.getEmpTitle() == null || !loan.getEmpTitle().toUpperCase().includes("PA
 	logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
 	brokenRules++;
 }
-if (loan.getCreditInfo().getDti() > 21.0)
+if (loan.getCreditInfo().getDti() > 22.0)
 {
 	logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
 	brokenRules++;
@@ -41,7 +41,7 @@ if (loan.getLoanAmnt() > 40000)
 	logger_.info("Failed loan.getLoanAmnt() [" +loan.getLoanAmnt()+ "] " + loan.getId());
 	brokenRules++;
 }
-if((loan.getIntRate() < 11.5))
+if((loan.getIntRate() < 11.0))
 {
 	logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
 	brokenRules++;

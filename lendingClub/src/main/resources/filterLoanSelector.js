@@ -11,7 +11,7 @@ if (VALID_HOMEOWNERSHIP.indexOf(loan.getHomeOwnership())<0)
 	logger_.info("Failed VALID_HOMEOWNERSHIP [" +loan.getHomeOwnership()+ "] " + loan.getId());
 	brokenRules++;
 }
-if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 18.0 )
+if( ((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) > 19.0 )
 {
 	logger_.info("Failed ((loan.getLoanAmnt()/loan.getAnnualInc())*100.0) [" +((loan.getLoanAmnt() / loan.getAnnualInc())*100.0) +"] " + loan.getId());
 	brokenRules++;
@@ -31,7 +31,7 @@ if (loan.getEmpTitle() == null )
 	logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
 	brokenRules++;
 }
-if (loan.getCreditInfo().getDti() > 21.0)
+if (loan.getCreditInfo().getDti() > 22.0)
 {
 	logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
 	brokenRules++;
@@ -66,7 +66,7 @@ if(VALID_GRADE.indexOf(loan.getGrade())<0)
 	logger_.info("Failed VALID_GRADE [" + loan.getGrade()+"] " + loan.getId());
 	brokenRules++;
 }
-if((loan.getIntRate() < 11.5))
+if((loan.getIntRate() < 11.0))
 {
 	logger_.info("Failed INT_RATE [" + loan.getIntRate()+"] " + loan.getId());
 	brokenRules++;
@@ -86,7 +86,7 @@ if (loan.getCreditInfo().getInqLast6Mths() != null && loan.getCreditInfo().getIn
 	logger_.info("Failed loan.getCreditInfo().getInqLast6Mths() [" +loan.getCreditInfo().getInqLast6Mths()+ "] " + loan.getId());
 	brokenRules++;
 }
-if (loan.getCreditInfo().getAccOpenPast24Mths() != null && loan.getCreditInfo().getAccOpenPast24Mths() > 10)
+if (loan.getCreditInfo().getAccOpenPast24Mths() != null && loan.getCreditInfo().getAccOpenPast24Mths() > 11)
 {
 	logger_.info("Failed loan.getCreditInfo().getAccOpenPast24Mths() [" +loan.getCreditInfo().getAccOpenPast24Mths()+ "] " + loan.getId());
 	brokenRules++;
