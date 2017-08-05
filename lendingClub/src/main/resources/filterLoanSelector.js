@@ -26,11 +26,6 @@ if (VALID_TERM.indexOf(loan.getTerm())<0)
 	logger_.info("Failed VALID_TERM [" +loan.getTerm()+ "] " + loan.getId());
 	brokenRules++;
 }
-if (loan.getEmpTitle() == null )
-{
-	logger_.info("Failed loan.getEmpTitle() ["+loan.getEmpTitle() + "] " + loan.getId());
-	brokenRules++;
-}
 if (loan.getCreditInfo().getDti() > 21.0)
 {
 	logger_.info("Failed loan.getCreditInfo().getDti() [" +loan.getCreditInfo().getDti() + "] " + loan.getId());
