@@ -8,6 +8,7 @@ public interface LoanDao {
     void save(List<LoanListing> loans);
 
     List<LoanListing> loadAll();
+    List<LoanListing> loadAll(int min, int numRows);
 
     List<LoanListing> load(List<Long> loanIds);
 }

@@ -1,10 +1,7 @@
 
 package com.rp.p2p.model;
 
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenericGenerator;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;

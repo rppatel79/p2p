@@ -1,8 +1,6 @@
 
 package com.rp.p2p.model;
 
-import com.rp.p2p.model.OrderConfirmation;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;

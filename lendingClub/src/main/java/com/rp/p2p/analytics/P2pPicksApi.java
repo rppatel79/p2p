@@ -3,7 +3,6 @@ package com.rp.p2p.analytics;
 import com.rp.util.ApplicationProperties;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

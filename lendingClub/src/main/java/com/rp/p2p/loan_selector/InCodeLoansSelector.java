@@ -2,7 +2,6 @@ package com.rp.p2p.loan_selector;
 
 import com.rp.p2p.model.*;
 import org.apache.log4j.Logger;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -102,7 +101,7 @@ public class InCodeLoansSelector implements LoanSelector {
             logger_.info("Failed VALID_GRADE [" + loan.getGrade() + "] " + loan.getId());
             brokenRules++;
         }
-        if ((loan.getIntRate() < 9.0)) {
+        if (loan.getIntRate() < 9.0) {
             logger_.info("Failed INT_RATE [" + loan.getIntRate() + "] " + loan.getId());
             brokenRules++;
         }

@@ -7,5 +7,5 @@ import java.util.Set;
 
 public interface LoansSelector
 {
-    public List<LoanListing> select(Set<Long> allInvestedLoans, List<LoanListing> loanSelector)throws Exception;
+    List<LoanListing> select(Set<Long> allInvestedLoans, List<LoanListing> loanSelector)throws Exception;
 }

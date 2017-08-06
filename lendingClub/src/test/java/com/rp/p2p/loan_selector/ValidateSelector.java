@@ -1,9 +1,6 @@
-package com.rp.p2p.loan.loan_selector;
+package com.rp.p2p.loan_selector;
 
 import com.rp.p2p.loan.LoanDao;
-import com.rp.p2p.loan_selector.InCodeLoansSelector;
-import com.rp.p2p.loan_selector.LoanSelector;
-import com.rp.p2p.loan_selector.RhinoLoanSelector;
 import com.rp.p2p.model.LoanListing;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;

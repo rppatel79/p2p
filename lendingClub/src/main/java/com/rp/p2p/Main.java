@@ -1,9 +1,6 @@
 package com.rp.p2p;
 
-import com.rp.p2p.analytics.P2pPicksApi;
 import com.rp.p2p.loan_selector.FilteredLoansSelector;
-import com.rp.p2p.loan_selector.InCodeLoansSelector;
-import com.rp.p2p.loan_selector.LoansSelector;
 import com.rp.p2p.loan_selector.RhinoLoanSelector;
 import com.rp.p2p.model.*;
 import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
@@ -25,30 +22,33 @@ public class Main
     private final static Logger logger_ =Logger.getLogger(Main.class);
 
     public static Map<String, Long> getPortfolios(OriginatorApi originatorApi) {
-        //TODO
-        //return originatorApi.orderGetPortfolios();
-
         final Long FILTERSOURCE_PORTFOLIO_ID=36242193L;
-        final Long P2PPICKS_PORTFOLIO_ID=36332059L;
+        final Long FILTERSOURCE_PASTOR_PORTFOLIO_ID=99882052L;
 
         Map<String,Long> ret = new HashMap<String, Long>();
         ret.put(SourceType.filterSource.getPortfolioName(),FILTERSOURCE_PORTFOLIO_ID);
-        ret.put(SourceType.P2pPicks.getPortfolioName(),P2PPICKS_PORTFOLIO_ID);
+        ret.put(SourceType.filterSource_Pastor.getPortfolioName(),FILTERSOURCE_PASTOR_PORTFOLIO_ID);
 
         return ret;
     }
 
     public enum SourceType {
-        filterSource("AutoExecution"),P2pPicks("P2pPicks");
+        filterSource("AutoExecution","filterLoanSelector.js"),filterSource_Pastor("Pastor","pastor.js");
 
-        private String portfolioName_;
-        SourceType(String portfolioName)
+        private final String portfolioName_;
+        private final String filterRhino_;
+        SourceType(String portfolioName, String filterRhino)
         {
             portfolioName_=portfolioName;
+            filterRhino_=filterRhino;
         }
 
         public String getPortfolioName() {
             return portfolioName_;
+        }
+
+        public String getFilterRhino() {
+            return filterRhino_;
         }
     };
 
@@ -74,110 +74,9 @@ public class Main
                                                                 new com.rp.p2p.loan.dynamo.BrowseLoansResultDao()})));
             Map<String, Long> portfolioNameToId = getPortfolios(originatorApi);
 
-            List<LoanListing> toOrder;
-            if (SourceType.filterSource == sourceType) {
-                BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
-                FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new RhinoLoanSelector(RhinoLoanSelector.SCRIPT_FILTER_LOAN_SELECTOR));
-                toOrder = filteredLoansSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
-            } else {
-                P2pPicksApi p2pPicksApi = new P2pPicksApi();
-                P2pPicksApi.PicksResponse picksResponse = p2pPicksApi.list(null, "profit-maximizer");
-
-                BrowseLoansResult browseLoansResult = originatorApi.getBrowseLoansResult(true);
-                Map<Long, LoanListing> allListings = new HashMap<Long, LoanListing>();
-
-                for (LoanListing ll : browseLoansResult.getLoans()) {
-                    if (allListings.put(ll.getId(), ll) != null)
-                        logger_.info("Duplicate loan id:" + ll.getId());
-                }
-
-                //build loan
-                final List<LoanListing> loanListings = new ArrayList<LoanListing>(picksResponse.response.picks.size());
-                for (P2pPicksApi.Pick pick : picksResponse.response.picks) {
-                    LoanListing loanListing2 = allListings.get(pick.loan_id);
-                    if (loanListing2 == null)
-                        logger_.info("" + pick.loan_id + " is marked to buy, but not avaliable in lending club");
-                    else
-                        loanListings.add(loanListing2);
-                }
-                LoansSelector selector = new LoansSelector() {
-                    private Set<LoanGrade> VALID_GRADE = new HashSet<LoanGrade>();
-
-                    {
-                        VALID_GRADE.add(LoanGrade.A);
-                        VALID_GRADE.add(LoanGrade.B);
-                        VALID_GRADE.add(LoanGrade.C);
-                    }
-
-                    private Set<Integer> VALID_TERM = new HashSet<Integer>();
-
-                    {
-                        VALID_TERM.add(36);
-                    }
-
-
-                    @Override
-                    public List<LoanListing> select(Set<Long> allInvestedLoans,List<LoanListing> loanSelector) throws Exception {
-                        List<LoanListing> ret = new ArrayList<LoanListing>();
-
-                        //final Set<Long> allInvestedLoans = originatorApi.getAllInvestedLoans();
-                        for (LoanListing loan : loanSelector) {
-                            if (!VALID_GRADE.contains(loan.getGrade())) {
-                                logger_.info("Failed VALID_GRADE" + " " + loan.getId());
-                                continue;
-                            } else if (!VALID_TERM.contains(loan.getTerm())) {
-                                logger_.info("Failed VALID_TERM" + " " + loan.getId());
-                                continue;
-                            }else if( (loan.getLoanAmnt() / loan.getAnnualInc()) > 3.5 )
-                            {
-                                logger_.info("Failed (loan.getLoanAmnt() / loan.getAnnualInc())" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getCreditInfo().getDti() > 40)
-                            {
-                                logger_.info("Failed loan.getCreditInfo().getDti()" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getCreditInfo().getPubRec() != null && loan.getCreditInfo().getPubRec() > 0)
-                            {
-                                logger_.info("Failed loan.getCreditInfo().getPubRec()" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getLoanAmnt() > 25000)
-                            {
-                                logger_.info("Failed loan.getLoanAmnt()" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getEmpTitle() == null || "N/A".equalsIgnoreCase(loan.getEmpTitle()))
-                            {
-                                logger_.info("Failed loan.getEmpTitle()" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getCreditInfo().getMthsSinceLastDelinq() != null && loan.getCreditInfo().getMthsSinceLastDelinq() < (12*7) )
-                            {
-                                logger_.info("Failed loan.getCreditInfo().getMthsSinceLastDelinq()" + " " + loan.getId());
-                                continue;
-                            }
-                            else if (loan.getCreditInfo().getPubRec() != null && loan.getCreditInfo().getPubRec() > 0)
-                            {
-                                logger_.info("Failed loan.getCreditInfo().getPubRec()" + " " + loan.getId());
-                                continue;
-                            }
-                            {
-                                if (allInvestedLoans.contains(loan.getId())) {
-                                    logger_.info("Failed allInvestedLoans.contains(loan.getId())" + " " + loan.getId());
-                                    continue;
-                                }
-                            }
-
-                            ret.add(loan);
-                        }
-
-                        return ret;
-                    }
-                };
-                toOrder = selector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),loanListings);
-            }
+            BrowseLoansResult browseLoansResult = originatorApi.getAndStoreBrowseLoansResult(false);
+            FilteredLoansSelector filteredLoansSelector = new FilteredLoansSelector(new RhinoLoanSelector(sourceType.getFilterRhino()));
+            List<LoanListing> toOrder = filteredLoansSelector.select(Collections.unmodifiableSet(originatorApi.getAllInvestedLoans()),browseLoansResult.getLoans());
 
             if (execute) {
                 // build order
@@ -202,7 +101,7 @@ public class Main
                 }
 
                 if (orders.size() > 0) {
-                    com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus=(new OrderExecutor()).order(orders);
+                    com.rp.p2p.order_executor.OrderExecutor.OrderStatus orderStatus=new OrderExecutor().order(orders);
                     new EmailHelper().sendEmail(sourceType, orderStatus, loanListingMap);
                 }
             }
@@ -225,7 +124,7 @@ public class Main
     }
 
     private static void usage() {
-        logger_.info(Main.class.getName() + " <filterSource|P2pPicks> <requestedAmount>");
+        logger_.info(Main.class.getName() + " <filterSource|filterSource_Pastor> <requestedAmount>");
     }
     public static class EmailHelper
     {

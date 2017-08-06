@@ -7,13 +7,12 @@ import com.rp.p2p.model.OwnedNote;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface OriginatorApi
 {
-    public Set<Long> getAllInvestedLoans() throws IOException;
+    Set<Long> getAllInvestedLoans() throws IOException;
 
     BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception;
 

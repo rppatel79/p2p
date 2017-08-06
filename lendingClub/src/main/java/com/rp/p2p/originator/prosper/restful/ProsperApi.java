@@ -1,19 +1,17 @@
 package com.rp.p2p.originator.prosper.restful;
 
 
-import com.codesnippets4all.json.parsers.JsonParserFactory;
+//import com.json.parsers.JsonParserFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
-import com.rp.util.db.HibernateUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,19 +54,16 @@ public class ProsperApi implements OriginatorApi
                 //request.setHeader("listingId",""+order.getLoanId());
                 //request.setHeader("amount",""+order.getRequestedAmount());
 
-                JsonParserFactory factory = JsonParserFactory.getInstance();
-                com.codesnippets4all.json.parsers.JSONParser parser = factory.newJsonParser();
-
                 Response response = request.execute();
                 HttpResponse httpResponse = response.returnResponse();
                 String responseStr = EntityUtils.toString(httpResponse.getEntity());
-                Map orderConfirmationsMap = parser.parseJson(responseStr);
+                Map<String,Object> orderConfirmationsMap = new ObjectMapper().readValue(responseStr, HashMap.class);
 
                 if (orderConfirmationsMap != null) {
                     OrderConfirmation orderConfirmation = new OrderConfirmation();
                     orderConfirmation.setLoanId(Long.valueOf((String) orderConfirmationsMap.get("ListingId")));
                     orderConfirmation.setRequestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("RequestedAmount")));
-                    orderConfirmation.setInvestedAmount((Double.parseDouble((String)orderConfirmationsMap.get("AmountInvested"))));
+                    orderConfirmation.setInvestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("AmountInvested")));
                     String status = (String) orderConfirmationsMap.get("State");
                     {
                         orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(status));
@@ -85,6 +80,8 @@ public class ProsperApi implements OriginatorApi
 
         OrderInstructConfirmation orderInstructConfirmation = new OrderInstructConfirmation();
         orderInstructConfirmation.getOrderConfirmations().addAll(orderConfirmations);
+
+        logger_.trace("Returning ["+orderConfirmations.size()+"] orderInstructConfirmation records");
         return orderInstructConfirmation;
     }
 
@@ -183,7 +180,7 @@ public class ProsperApi implements OriginatorApi
                 ownedNote.setLoanStatus((String)noteOwned.get("NoteStatusDescription"));
                 ownedNote.setLoanId((Integer)noteOwned.get("ListingNumber"));
                 ownedNote.setNoteId((String)noteOwned.get("LoanNoteID"));
-                ownedNote.setGrade(LoanGrade.valueOf((noteOwned.get("ProsperRating")).equals("AA")?"A":(String)noteOwned.get("ProsperRating")));
+                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("ProsperRating").equals("AA")?"A":(String)noteOwned.get("ProsperRating")));
                 ownedNote.setLoanAmount((Double)noteOwned.get("TotalAmountBorrowed"));
                 //ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
                 ownedNote.setInterestRate((Double)noteOwned.get("BorrowerRate"));

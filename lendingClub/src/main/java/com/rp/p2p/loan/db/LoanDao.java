@@ -48,8 +48,29 @@ public class LoanDao implements com.rp.p2p.loan.LoanDao {
             session = sessionFactory.openSession();
             Criteria criteria = session.createCriteria(LoanListing.class);
             criteria.setReadOnly(true);
-            //criteria.setMaxResults(1000);
-            //criteria.setFirstResult(1000);
+
+            return criteria.list();
+        }
+        finally
+        {
+            if (session != null )
+                session.close();
+        }
+    }
+
+    @Override
+    public List<LoanListing> loadAll(int min, int numRows)
+    {
+        SessionFactory sessionFactory = null;
+        Session session =null;
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory(HibernateUtil.DbId.P2P);
+            session = sessionFactory.openSession();
+            Criteria criteria = session.createCriteria(LoanListing.class);
+            criteria.setReadOnly(true);
+            criteria.setMaxResults(numRows);
+            criteria.setFirstResult(min);
+
             return criteria.list();
         }
         finally

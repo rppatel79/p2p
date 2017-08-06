@@ -1,7 +1,6 @@
 package com.rp.p2p.originator.lending_club.restful;
 
-import com.codesnippets4all.json.parsers.JSONParser;
-import com.codesnippets4all.json.parsers.JsonParserFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.util.ApplicationProperties;
@@ -46,13 +45,17 @@ public class LendingClubApi implements OriginatorApi
         Request request = prepareRequest("orders", Type.ACCOUNT_POST);
         String jsonString = createJsonRequestString(orders);
         request.bodyString(jsonString, ContentType.DEFAULT_TEXT);
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
+
+
         try {
             Response response = request.execute();
             HttpResponse httpResponse = response.returnResponse();
             String responseStr = EntityUtils.toString(httpResponse.getEntity());
-            Map d = parser.parseJson(responseStr);
+//            Map d = parser.parseJson(responseStr);
+            Map<String,Object> d =
+                    new ObjectMapper().readValue(responseStr, HashMap.class);
 
             List<String> errors = (List<String>)d.get("errors");
             List<Map<String,Object>> orderConfirmationsMap = (List<Map<String,Object>>)d.get("orderConfirmations");
@@ -60,9 +63,9 @@ public class LendingClubApi implements OriginatorApi
                 List<OrderConfirmation> orderConfirmations = new ArrayList<OrderConfirmation>(orderConfirmationsMap.size());
                 for (Map<String, Object> record : orderConfirmationsMap) {
                     OrderConfirmation orderConfirmation = new OrderConfirmation();
-                    orderConfirmation.setLoanId(Long.valueOf((String)record.get("loanId")));
-                    orderConfirmation.setRequestedAmount(Double.valueOf((String) record.get("requestedAmount")));
-                    orderConfirmation.setInvestedAmount(Double.valueOf((String) record.get("investedAmount")));
+                    orderConfirmation.setLoanId((Integer)record.get("loanId"));
+                    orderConfirmation.setRequestedAmount(Double.valueOf((Double) record.get("requestedAmount")));
+                    orderConfirmation.setInvestedAmount(Double.valueOf((Double) record.get("investedAmount")));
                     List<String> executionStatus = (List<String>) record.get("executionStatus");
                     for (String value : executionStatus) {
                         orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(value));
@@ -122,15 +125,16 @@ public class LendingClubApi implements OriginatorApi
     @Override
     public Collection<OwnedNote> getNotesOwned()
     {
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
         Map map;
         try {
-            map = parser.parseJson(prepareRequest("notes", Type.NOTES).execute().returnContent().asStream(), "UTF-8");
-//            if (!map.containsKey("loans")) {
-//                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
-//            }
-            return convertNotesOwned((List<Map<String, String>>) map.get("myNotes"));
+            InputStream jsonString = prepareRequest("notes", Type.NOTES).execute().returnContent().asStream();
+//            map = parser.parseJson(prepareRequest("notes", Type.NOTES).execute().returnContent().asStream(), "UTF-8");
+
+            map = new ObjectMapper().readValue(jsonString, HashMap.class);
+
+            return convertNotesOwned((List<Map<String, ?>>) map.get("myNotes"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -138,15 +142,18 @@ public class LendingClubApi implements OriginatorApi
 
     @Override
     public BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception {
-        JsonParserFactory factory = JsonParserFactory.getInstance();
-        JSONParser parser = factory.newJsonParser();
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
         Map map;
         try {
-            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
+            InputStream jsonString = prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream();
+//            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
+            map = new ObjectMapper().readValue(jsonString, HashMap.class);
+
 //            if (!map.containsKey("loans")) {
 //                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
 //            }
-            List<Map<String, String>> loansMap = (List<Map<String, String>>) map.get("loans");
+            List<Map<String, ?>> loansMap = (List<Map<String, ?>>) map.get("loans");
             if (loansMap == null) {
                 logger_.warn("Made RESTful request but did not get any results.");
                 return new BrowseLoansResult();//return an empty shell
@@ -158,25 +165,25 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
-    private Collection<OwnedNote> convertNotesOwned(List<Map<String, String>> allNotesOwned) throws ParseException {
+    private Collection<OwnedNote> convertNotesOwned(List<Map<String, ?>> allNotesOwned) throws ParseException {
         Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
-        for (Map<String,String>  noteOwned : allNotesOwned)
+        for (Map<String,?>  noteOwned : allNotesOwned)
         {
             OwnedNote ownedNote = new OwnedNote();
             {
-                ownedNote.setLoanStatus(noteOwned.get("loanStatus"));
-                ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId")));
-                ownedNote.setNoteId((noteOwned.get("noteId")));
-                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade")));
-                ownedNote.setLoanAmount(Double.valueOf(noteOwned.get("loanAmount")));
-                ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
-                ownedNote.setInterestRate(Double.valueOf(noteOwned.get("interestRate")));
-                ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId")));
-                ownedNote.setTerm(Integer.valueOf(noteOwned.get("loanLength")));
+                ownedNote.setLoanStatus(StringValueOf(noteOwned.get("loanStatus")));
+                ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId").toString()));
+                ownedNote.setNoteId(StringValueOf(noteOwned.get("noteId")));
+                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade").toString()));
+                ownedNote.setLoanAmount(DoubleValueOf(noteOwned.get("loanAmount")));
+                ownedNote.setNoteAmount(DoubleValueOf(noteOwned.get("noteAmount")));
+                ownedNote.setInterestRate(DoubleValueOf(noteOwned.get("interestRate")));
+                ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId").toString()));
+                ownedNote.setTerm(IntegerValueOf(noteOwned.get("loanLength")));
                 ownedNote.setIssueDate(DateValueOf(noteOwned.get("issueDate")));
                 ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
                 ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
-                ownedNote.setPaymentsReceived(Double.valueOf(noteOwned.get("paymentsReceived")));
+                ownedNote.setPaymentsReceived(DoubleValueOf(noteOwned.get("paymentsReceived")));
             }
 
             ret.add(ownedNote);
@@ -185,28 +192,28 @@ public class LendingClubApi implements OriginatorApi
         return ret;
     }
 
-    private BrowseLoansResult convertLoans(List<Map<String, String>> allLoans) {
+    private BrowseLoansResult convertLoans(List<Map<String, ?>> allLoans) {
         BrowseLoansResult browseLoansResult = new BrowseLoansResult();
-        for (Map<String,String>  loans : allLoans)
+        for (Map<String,?>  loans : allLoans)
         {
             LoanListing loan = new LoanListing();
 
-            loan.setId(Long.valueOf(loans.get("id")));
-            loan.setMemberId((loans.get("memberId")));
+            loan.setId((Integer)loans.get("id"));
+            loan.setMemberId(StringValueOf(loans.get("memberId")));
 
-            loan.setLoanAmnt(Double.valueOf(loans.get("loanAmount")));
-            loan.setFundedAmnt(Double.valueOf(loans.get("fundedAmount")));
-            loan.setTerm(Integer.valueOf(loans.get("term")));
-            loan.setIntRate(Double.valueOf(loans.get("intRate")));
-            loan.setExpDefaultRate(Double.valueOf(loans.get("expDefaultRate")));
-            loan.setServiceFeeRate(Double.valueOf(loans.get("serviceFeeRate")));
-            loan.setInstallment(Double.valueOf(loans.get("installment")));
-            loan.setGrade(LoanGrade.valueOf(loans.get("grade")));
-            loan.setSubGrade(LoanSubGrade.fromValue(loans.get("subGrade")));
-            loan.setEmpLength(IntegerValueOf(loans.get("empLength")));
-            loan.setHomeOwnership(HomeOwnership.valueOf(loans.get("homeOwnership")));
-            loan.setAnnualInc(Double.valueOf(loans.get("annualInc")));
-            loan.setIsIncV("null".equals(loans.get("isIncV"))? null : IncomeVerification.valueOf(loans.get("isIncV")));
+            loan.setLoanAmnt((Double)loans.get("loanAmount"));
+            loan.setFundedAmnt((Double)loans.get("fundedAmount"));
+            loan.setTerm((Integer)loans.get("term"));
+            loan.setIntRate((Double)loans.get("intRate"));
+            loan.setExpDefaultRate((Double)loans.get("expDefaultRate"));
+            loan.setServiceFeeRate((Double)loans.get("serviceFeeRate"));
+            loan.setInstallment((Double)loans.get("installment"));
+            loan.setGrade(LoanGrade.valueOf(loans.get("grade").toString()));
+            loan.setSubGrade(LoanSubGrade.fromValue(loans.get("subGrade").toString()));
+            loan.setEmpLength((Integer)loans.get("empLength"));
+            loan.setHomeOwnership(HomeOwnership.valueOf(loans.get("homeOwnership").toString()));
+            loan.setAnnualInc((Double)loans.get("annualInc"));
+            loan.setIsIncV("null".equals(loans.get("isIncV"))? null : IncomeVerification.valueOf(loans.get("isIncV").toString()));
 
             loan.setAcceptD(DateValueOf(loans.get("acceptD")));
             loan.setExpD(DateValueOf(loans.get("expD")));
@@ -214,72 +221,72 @@ public class LendingClubApi implements OriginatorApi
             loan.setCreditPullD(DateValueOf(loans.get("creditPullD")));
             loan.setReviewStatusD(DateValueOf(loans.get("reviewStatusD")));
 
-            loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus")));
-            loan.setDescription(loans.get("description"));
-            loan.setPurpose(LoanPurpose.fromValue(loans.get("purpose").toUpperCase()));
+            loan.setReviewStatus(ReviewStatus.valueOf(loans.get("reviewStatus").toString()));
+            loan.setDescription(StringValueOf(loans.get("description")));
+            loan.setPurpose(LoanPurpose.fromValue(loans.get("purpose").toString().toUpperCase()));
             //loan.setAddrZip(loans.get("addrZip"));
-            loan.setAddrState(loans.get("addrState"));
+            loan.setAddrState(StringValueOf(loans.get("addrState")));
             loan.setInvestorCount(IntegerValueOf(loans.get("investorCount")));
             loan.setIlsExpD(DateValueOf(loans.get("ilsExpD")));
-            loan.setInitialListStatus(loans.get("initialListStatus"));
+            loan.setInitialListStatus(StringValueOf(loans.get("initialListStatus")));
             loan.setEmpTitle(StringValueOf(loans.get("empTitle")));
             loan.setCreditInfo(new CreditInfo());
             loan.getCreditInfo().setAccNowDelinq(IntegerValueOf(loans.get("accNowDelinq")));
-            loan.getCreditInfo().setAccOpenPast24Mths(Integer.valueOf(loans.get("accOpenPast24Mths")));
+            loan.getCreditInfo().setAccOpenPast24Mths(IntegerValueOf(loans.get("accOpenPast24Mths")));
             loan.getCreditInfo().setBcOpenToBuy(DoubleValueOf(loans.get("bcOpenToBuy")));//:30000,
             loan.getCreditInfo().setPercentBcGt75(DoubleValueOf(loans.get("percentBcGt75")));//:23.0,
             loan.getCreditInfo().setBcUtil(DoubleValueOf(loans.get("bcUtil")));//:23.0,
-            loan.getCreditInfo().setDti(Double.valueOf(loans.get("dti")));//:0.0,
-            loan.getCreditInfo().setDelinq2Yrs(Integer.valueOf(loans.get("delinq2Yrs")));//:1,
-            loan.getCreditInfo().setDelinqAmnt(Double.valueOf(loans.get("delinqAmnt")));//:0.0,
+            loan.getCreditInfo().setDti(DoubleValueOf(loans.get("dti")));//:0.0,
+            loan.getCreditInfo().setDelinq2Yrs(IntegerValueOf(loans.get("delinq2Yrs")));//:1,
+            loan.getCreditInfo().setDelinqAmnt(DoubleValueOf(loans.get("delinqAmnt")));//:0.0,
             loan.getCreditInfo().setEarliestCrLine(DateValueOf(loans.get("earliestCrLine")));//:"1984-09-15T00:00:00.000-07:00",
-            loan.getCreditInfo().setFicoRangeLow(Integer.valueOf(loans.get("ficoRangeLow")));//:750,
-            loan.getCreditInfo().setFicoRangeHigh(Integer.valueOf(loans.get("ficoRangeHigh")));//:754,
+            loan.getCreditInfo().setFicoRangeLow(IntegerValueOf(loans.get("ficoRangeLow")));//:750,
+            loan.getCreditInfo().setFicoRangeHigh(IntegerValueOf(loans.get("ficoRangeHigh")));//:754,
             loan.getCreditInfo().setInqLast6Mths(IntegerValueOf(loans.get("inqLast6Mths")));//:0,
             loan.getCreditInfo().setMthsSinceLastDelinq(IntegerValueOf(loans.get("mthsSinceLastDelinq")));//:90,
             loan.getCreditInfo().setMthsSinceLastRecord(IntegerValueOf(loans.get("mthsSinceLastRecord")));//:0,
             loan.getCreditInfo().setMthsSinceRecentInq(IntegerValueOf(loans.get("mthsSinceRecentInq")));//:14,
             loan.getCreditInfo().setMthsSinceRecentRevolDelinq(IntegerValueOf(loans.get("mthsSinceRecentRevolDelinq")));//:23,
             loan.getCreditInfo().setMthsSinceRecentBc(IntegerValueOf(loans.get("mthsSinceRecentBc")));//:23,
-            loan.getCreditInfo().setMortAcc(Integer.valueOf(loans.get("mortAcc")));//:23,
-            loan.getCreditInfo().setOpenAcc(Integer.valueOf(loans.get("openAcc")));//:3,
-            loan.getCreditInfo().setPubRec(Integer.valueOf(loans.get("pubRec")));//:0,
+            loan.getCreditInfo().setMortAcc(IntegerValueOf(loans.get("mortAcc")));//:23,
+            loan.getCreditInfo().setOpenAcc(IntegerValueOf(loans.get("openAcc")));//:3,
+            loan.getCreditInfo().setPubRec(IntegerValueOf(loans.get("pubRec")));//:0,
             loan.getCreditInfo().setTotalBalExMort(DoubleValueOf(loans.get("totalBalExMort")));//:13944,
-            loan.getCreditInfo().setRevolBal(Double.valueOf(loans.get("revolBal")));//:1.0,
+            loan.getCreditInfo().setRevolBal(DoubleValueOf(loans.get("revolBal")));//:1.0,
             loan.getCreditInfo().setRevolUtil(DoubleValueOf(loans.get("revolUtil")));//:0.0,
-            loan.getCreditInfo().setTotalBcLimit(Double.valueOf(loans.get("totalBcLimit")));//:23,
-            loan.getCreditInfo().setTotalAcc(Integer.valueOf(loans.get("totalAcc")));//:4,
-            loan.getCreditInfo().setTotalIlHighCreditLimit(Integer.valueOf(loans.get("totalIlHighCreditLimit")));//:12,
+            loan.getCreditInfo().setTotalBcLimit(DoubleValueOf(loans.get("totalBcLimit")));//:23,
+            loan.getCreditInfo().setTotalAcc(IntegerValueOf(loans.get("totalAcc")));//:4,
+            loan.getCreditInfo().setTotalIlHighCreditLimit(IntegerValueOf(loans.get("totalIlHighCreditLimit")));//:12,
             loan.getCreditInfo().setNumRevAccts(IntegerValueOf(loans.get("numRevAccts")));//:28,
             loan.getCreditInfo().setMthsSinceRecentBcDlq(IntegerValueOf(loans.get("mthsSinceRecentBcDlq")));//:52,
-            loan.getCreditInfo().setPubRecBankruptcies(Integer.valueOf(loans.get("pubRecBankruptcies")));//:0,
-            loan.getCreditInfo().setNumAcctsEver120Ppd(Integer.valueOf(loans.get("numAcctsEver120Ppd")));//:12,
-            loan.getCreditInfo().setChargeoffWithin12Mths(Integer.valueOf(loans.get("chargeoffWithin12Mths")));//:0,
-            loan.getCreditInfo().setCollections12MthsExMed(Integer.valueOf(loans.get("collections12MthsExMed")));//:0,
-            loan.getCreditInfo().setTaxLiens(Integer.valueOf(loans.get("taxLiens")));//:0,
+            loan.getCreditInfo().setPubRecBankruptcies(IntegerValueOf(loans.get("pubRecBankruptcies")));//:0,
+            loan.getCreditInfo().setNumAcctsEver120Ppd(IntegerValueOf(loans.get("numAcctsEver120Ppd")));//:12,
+            loan.getCreditInfo().setChargeoffWithin12Mths(IntegerValueOf(loans.get("chargeoffWithin12Mths")));//:0,
+            loan.getCreditInfo().setCollections12MthsExMed(IntegerValueOf(loans.get("collections12MthsExMed")));//:0,
+            loan.getCreditInfo().setTaxLiens(IntegerValueOf(loans.get("taxLiens")));//:0,
             loan.getCreditInfo().setMthsSinceLastMajorDerog(IntegerValueOf(loans.get("mthsSinceLastMajorDerog")));//:12,
-            loan.getCreditInfo().setNumSats(Integer.valueOf(loans.get("numSats")));//:8,
-            loan.getCreditInfo().setNumTlOpPast12M(Integer.valueOf(loans.get("numTlOpPast12m")));//:0,
-            loan.getCreditInfo().setMoSinRcntTl(Integer.valueOf(loans.get("moSinRcntTl")));//:12,
-            loan.getCreditInfo().setTotHiCredLim(Integer.valueOf(loans.get("totHiCredLim")));//:12,
-            loan.getCreditInfo().setTotCurBal(Integer.valueOf(loans.get("totCurBal")));//:12,
-            loan.getCreditInfo().setAvgCurBal(Integer.valueOf(loans.get("avgCurBal")));//:12,
-            loan.getCreditInfo().setNumBcTl(Integer.valueOf(loans.get("numBcTl")));//:12,
-            loan.getCreditInfo().setNumActvBcTl(Integer.valueOf(loans.get("numActvBcTl")));//:12,
-            loan.getCreditInfo().setNumBcSats(Integer.valueOf(loans.get("numBcSats")));//:7,
-            loan.getCreditInfo().setPctTlNvrDlq(Integer.valueOf(loans.get("pctTlNvrDlq")));//:12,
+            loan.getCreditInfo().setNumSats(IntegerValueOf(loans.get("numSats")));//:8,
+            loan.getCreditInfo().setNumTlOpPast12M(IntegerValueOf(loans.get("numTlOpPast12m")));//:0,
+            loan.getCreditInfo().setMoSinRcntTl(IntegerValueOf(loans.get("moSinRcntTl")));//:12,
+            loan.getCreditInfo().setTotHiCredLim(IntegerValueOf(loans.get("totHiCredLim")));//:12,
+            loan.getCreditInfo().setTotCurBal(IntegerValueOf(loans.get("totCurBal")));//:12,
+            loan.getCreditInfo().setAvgCurBal(IntegerValueOf(loans.get("avgCurBal")));//:12,
+            loan.getCreditInfo().setNumBcTl(IntegerValueOf(loans.get("numBcTl")));//:12,
+            loan.getCreditInfo().setNumActvBcTl(IntegerValueOf(loans.get("numActvBcTl")));//:12,
+            loan.getCreditInfo().setNumBcSats(IntegerValueOf(loans.get("numBcSats")));//:7,
+            loan.getCreditInfo().setPctTlNvrDlq(IntegerValueOf(loans.get("pctTlNvrDlq")));//:12,
             //loan.getCreditInfo().setNumTl90gDpd24m("numTl90gDpd24m"));//:12,
             //loan.getCreditInfo().setNum130dpd(loans.get("numTl30dpd"));//:12,
             loan.getCreditInfo().setNumTl120Dpd2M(IntegerValueOf(loans.get("numTl120dpd2m")));//:12,
-            loan.getCreditInfo().setNumIlTl(Integer.valueOf(loans.get("numIlTl")));//:12,
+            loan.getCreditInfo().setNumIlTl(IntegerValueOf(loans.get("numIlTl")));//:12,
             loan.getCreditInfo().setMoSinOldIlAcct(IntegerValueOf(loans.get("moSinOldIlAcct")));//:12,
-            loan.getCreditInfo().setNumActvRevTl(Integer.valueOf(loans.get("numActvRevTl")));//:12,
-            loan.getCreditInfo().setMoSinOldRevTlOp(Integer.valueOf(loans.get("moSinOldRevTlOp")));//:12,
-            loan.getCreditInfo().setMoSinRcntRevTlOp(Integer.valueOf(loans.get("moSinRcntRevTlOp")));//:11,
-            loan.getCreditInfo().setTotalRevHiLim(Integer.valueOf(loans.get("totalRevHiLim")));//:12,
+            loan.getCreditInfo().setNumActvRevTl(IntegerValueOf(loans.get("numActvRevTl")));//:12,
+            loan.getCreditInfo().setMoSinOldRevTlOp(IntegerValueOf(loans.get("moSinOldRevTlOp")));//:12,
+            loan.getCreditInfo().setMoSinRcntRevTlOp(IntegerValueOf(loans.get("moSinRcntRevTlOp")));//:11,
+            loan.getCreditInfo().setTotalRevHiLim(IntegerValueOf(loans.get("totalRevHiLim")));//:12,
             //loan.getCreditInfo().setNumRevT1BalGt0(loans.get("numRevTlBalGt0"));//:12,
-            loan.getCreditInfo().setNumOpRevTl(Integer.valueOf(loans.get("numOpRevTl")));//:12,
-            loan.getCreditInfo().setTotCollAmt(Integer.valueOf(loans.get("totCollAmt")));//:12
+            loan.getCreditInfo().setNumOpRevTl(IntegerValueOf(loans.get("numOpRevTl")));//:12,
+            loan.getCreditInfo().setTotCollAmt(IntegerValueOf(loans.get("totCollAmt")));//:12
 
             browseLoansResult.getLoans().add(loan);
         }
@@ -303,6 +310,15 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
+    private final static Date DateValueOf(Object value) {
+        if (value == null )
+            return null;
+        else {
+            return DateValueOf(value.toString());
+        }
+    }
+
+
     private final static String StringValueOf(String value){
         if (value == null || "null".equals(value) || value.isEmpty() || "N/A".equalsIgnoreCase(value))
             return null;
@@ -311,31 +327,52 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
+    private final static String StringValueOf(Object value){
+        if (value == null )
+            return null;
+        else {
+            return StringValueOf(value.toString());
+        }
+    }
+
+
     private final static Integer IntegerValueOf(String investorCount) {
         //if (investorCount == null)return null;
         return "null".equals(investorCount) ? null : Integer.valueOf(investorCount);
     }
+
+    private final static Integer IntegerValueOf(Object investorCount) {
+        if (investorCount == null)return null;
+        return IntegerValueOf(investorCount.toString());
+    }
+
 
     private final static Double DoubleValueOf(String investorCount) {
         //if (investorCount == null)return null;
         return "null".equals(investorCount) ? null : Double.valueOf(investorCount);
     }
 
+    private final static Double DoubleValueOf(Object investorCount) {
+        if (investorCount == null)return null;
+        return DoubleValueOf(investorCount.toString());
+    }
     @Override
     public Map<String,Long> orderGetPortfolios()
     {
         try {
             Request req = prepareRequest("portfolios", Type.ACCOUNT);
-            JsonParserFactory factory = JsonParserFactory.getInstance();
-            JSONParser parser = factory.newJsonParser();
-            Map map = parser.parseJson(executeWithRetry(req), "UTF-8");
+//            JsonParserFactory factory = JsonParserFactory.getInstance();
+//            JSONParser parser = factory.newJsonParser();
+//            Map map = parser.parseJson(executeWithRetry(req), "UTF-8");
+            Map map = new ObjectMapper().readValue(executeWithRetry(req), HashMap.class);
+
             List<Map> portfoliosList = (List<Map>) map.get("myPortfolios");
             Map<String, Long> ret = new HashMap<String, Long>();
             for (int i = 0, size = portfoliosList.size(); i < size; i++) {
                 Map mapPortfolio = portfoliosList.get(i);
                 long id = Long.parseLong((String) mapPortfolio.get("portfolioId"));
                 String name = (String) mapPortfolio.get("portfolioName");
-                String desc = (String) mapPortfolio.get("portfolioDescription");
+                //String desc = (String) mapPortfolio.get("portfolioDescription");
 
                 ret.put(name, id);
             }
