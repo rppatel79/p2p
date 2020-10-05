@@ -2,7 +2,6 @@ package com.rp.p2p;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.s3.event.S3EventNotification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

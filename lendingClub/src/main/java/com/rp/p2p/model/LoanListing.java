@@ -1,4 +1,3 @@
-
 package com.rp.p2p.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
