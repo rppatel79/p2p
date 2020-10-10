@@ -19,221 +19,54 @@ import org.json.JSONObject;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ProsperApi implements OriginatorApi
-{
+/**
+ * @Deprecated - This code is no longer used or tested.
+ */
+public class ProsperApi implements OriginatorApi {
     private final static Logger logger_ = Logger.getLogger(ProsperApi.class);
 
     private static final String BASE_URL = "https://api.prosper.com/api/";
 
-    private static enum Type {
-        ACCOUNT, LOANS, ACCOUNT_POST, NOTES
-    };
-
-    private final String prosperUsr_;
-    private final String prosperPasswd_;
-    public ProsperApi() throws IOException
-    {
-        prosperUsr_ = ApplicationProperties.getInstance().getProperty("PROSPER_USR");
-        prosperPasswd_ = ApplicationProperties.getInstance().getProperty("PROSPER_PASSWD");
-    }
-
-    @Override
-    public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders)
-    {
-        List<OrderConfirmation> orderConfirmations = new ArrayList<OrderConfirmation>(orders.size());
-
-        for (Order order : orders) {
-            try {
-                Request request = prepareRequest(Type.ACCOUNT_POST);
-                String jsonString = createJsonRequestString(order);
-                request.bodyString(jsonString, ContentType.APPLICATION_JSON);
-                //request.setHeader("listingId",""+order.getLoanId());
-                //request.setHeader("amount",""+order.getRequestedAmount());
-
-                Response response = request.execute();
-                HttpResponse httpResponse = response.returnResponse();
-                String responseStr = EntityUtils.toString(httpResponse.getEntity());
-                Map<String,Object> orderConfirmationsMap = new ObjectMapper().readValue(responseStr, HashMap.class);
-
-                if (orderConfirmationsMap != null) {
-                    OrderConfirmation orderConfirmation = new OrderConfirmation();
-                    orderConfirmation.setLoanId(Long.valueOf((String) orderConfirmationsMap.get("ListingId")));
-                    orderConfirmation.setRequestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("RequestedAmount")));
-                    orderConfirmation.setInvestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("AmountInvested")));
-                    String status = (String) orderConfirmationsMap.get("State");
-                    {
-                        orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(status));
-                    }
-
-                    orderConfirmations.add(orderConfirmation);
-                } else {
-                    throw new RuntimeException("Invalid message:" + orderConfirmationsMap );
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        OrderInstructConfirmation orderInstructConfirmation = new OrderInstructConfirmation();
-        orderInstructConfirmation.getOrderConfirmations().addAll(orderConfirmations);
-
-        logger_.trace("Returning ["+orderConfirmations.size()+"] orderInstructConfirmation records");
-        return orderInstructConfirmation;
-    }
-
-    private String createJsonRequestString(Order order) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"listingId\": ").append(order.getLoanId()).append(',');
-        sb.append("\"amount\": ").append(order.getRequestedAmount())
-                .append("}");
-        return sb.toString();
-
-    }
-
-    @Override
-    public Collection<OwnedNote> getNotesOwned()
-    {
-        List<Map<String,Object>> map;
-        try {
-            map = toMap(new JSONArray(prepareRequest(Type.NOTES).execute().returnContent().asString()));
-            return convertNotesOwned(map);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception {
-        List<Map<String, Object>> map;
-        try {
-            map = toMap(new JSONArray(prepareRequest(Type.LOANS).execute().returnContent().asString()));
-            return convertLoans(map);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Set<Long> getAllInvestedLoans() throws IOException {
-        throw new UnsupportedOperationException("Not completed yet");
-    }
-
-    private static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
-        List<Map<String, Object>> ret = new LinkedList<Map<String, Object>>();
-        for ( int i = 0 ; i < object.length() ; i++)
-        {
-            ret.add(toMap((JSONObject) object.get(i)));
-        }
-
-        return ret;
-    }
-
-    private static Map<String, Object> toMap(JSONObject object) throws JSONException {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        Iterator<String> keysItr = object.keys();
-        while(keysItr.hasNext()) {
-            String key = keysItr.next();
-            Object value = object.get(key);
-
-            if(value instanceof JSONArray) {
-                value = toList((JSONArray) value);
-            }
-
-            else if(value instanceof JSONObject) {
-                value = toMap((JSONObject) value);
-            }
-            map.put(key, value);
-        }
-        return map;
-    }
-
-    private static List<Object> toList(JSONArray array) throws JSONException {
-        List<Object> list = new ArrayList<Object>();
-        for(int i = 0; i < array.length(); i++) {
-            Object value = array.get(i);
-            if(value instanceof JSONArray) {
-                value = toList((JSONArray) value);
-            }
-
-            else if(value instanceof JSONObject) {
-                value = toMap((JSONObject) value);
-            }
-            list.add(value);
-        }
-        return list;
-    }
-
-    private Collection<OwnedNote> convertNotesOwned(List<Map<String, Object>> allNotesOwned) throws ParseException {
-        //throw new UnsupportedOperationException();
-
-        Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
-        for (Map<String,Object>  noteOwned : allNotesOwned)
-        {
-            OwnedNote ownedNote = new OwnedNote();
-            {
-                ownedNote.setLoanStatus((String)noteOwned.get("NoteStatusDescription"));
-                ownedNote.setLoanId((Integer)noteOwned.get("ListingNumber"));
-                ownedNote.setNoteId((String)noteOwned.get("LoanNoteID"));
-                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("ProsperRating").equals("AA")?"A":(String)noteOwned.get("ProsperRating")));
-                ownedNote.setLoanAmount((Double)noteOwned.get("TotalAmountBorrowed"));
-                //ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
-                ownedNote.setInterestRate((Double)noteOwned.get("BorrowerRate"));
-                //ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId")));
-                ownedNote.setTerm((Integer)noteOwned.get("Term"));
-                ownedNote.setIssueDate(DateValueOf((String)noteOwned.get("OriginationDate")));
-                //ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
-                //ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
-                ownedNote.setPaymentsReceived((Double)noteOwned.get("PrincipalRepaid"));
-            }
-
-            ret.add(ownedNote);
-        }
-
-        return ret;
-    }
-
     private BrowseLoansResult convertLoans(List<Map<String, Object>> allLoans) throws ParseException {
 
         BrowseLoansResult browseLoansResult = new BrowseLoansResult();
-        for (Map<String,Object>  loans : allLoans)
-        {
+        for (Map<String, Object> loans : allLoans) {
             LoanListing loan = new LoanListing();
 
-            loan.setId((Integer)(loans.get("ListingNumber")));
-            loan.setMemberId((String)loans.get("MemberKey"));
-            loan.setLoanAmnt((Double)(loans.get("ListingRequestAmount")));
-            loan.setFundedAmnt((Double)(loans.get("ListingAmountFunded")));
-            loan.setTerm((Integer)(loans.get("ListingTerm")));
-            loan.setIntRate((Double)loans.get("BorrowerRate"));
+            loan.setId((Integer) (loans.get("ListingNumber")));
+            loan.setMemberId((String) loans.get("MemberKey"));
+            loan.setLoanAmnt((Double) (loans.get("ListingRequestAmount")));
+            loan.setFundedAmnt((Double) (loans.get("ListingAmountFunded")));
+            loan.setTerm((Integer) (loans.get("ListingTerm")));
+            loan.setIntRate((Double) loans.get("BorrowerRate"));
 
             //expDefaultRate;
             //serviceFeeRate;
             //installment;
-            loan.setGrade(LoanGrade.fromValue(((String)loans.get("ProsperRating")).equals("AA")?"A":(String)loans.get("ProsperRating")));
+            loan.setGrade(LoanGrade.fromValue(loans.get("ProsperRating").equals("AA") ? "A" : (String) loans.get("ProsperRating")));
             //subGrade;
-            loan.setEmpLength((Integer)(loans.get("MonthsEmployed")));
-            loan.setHomeOwnership((Boolean)(loans.get("IsHomeowner")) ? HomeOwnership.OWN : HomeOwnership.OTHER);
+            loan.setEmpLength((Integer) (loans.get("MonthsEmployed")));
+            loan.setHomeOwnership((Boolean) (loans.get("IsHomeowner")) ? HomeOwnership.OWN : HomeOwnership.OTHER);
             //otherHomeOwnership;
-            loan.setAnnualInc((Double)(loans.get("StatedMonthlyIncome"))*12.0);
-            loan.setIsIncV((Boolean)(loans.get("IncomeVerifiable")) ? IncomeVerification.VERIFIED : IncomeVerification.NOT_VERIFIED);
+            loan.setAnnualInc((Double) (loans.get("StatedMonthlyIncome")) * 12.0);
+            loan.setIsIncV((Boolean) (loans.get("IncomeVerifiable")) ? IncomeVerification.VERIFIED : IncomeVerification.NOT_VERIFIED);
             //acceptD;
             //expD;
-            loan.setListD(DateValueOf((String)loans.get("ListingCreationDate")));
-            loan.setCreditPullD(DateValueOf((String)loans.get("CreditPullDate")));
+            loan.setListD(DateValueOf((String) loans.get("ListingCreationDate")));
+            loan.setCreditPullD(DateValueOf((String) loans.get("CreditPullDate")));
             //reviewStatusD;
-            loan.setReviewStatus("Active".equals(loans.get("ListingStatusDescription"))?ReviewStatus.APPROVED:ReviewStatus.NOT_APPROVED);
+            loan.setReviewStatus("Active".equals(loans.get("ListingStatusDescription")) ? ReviewStatus.APPROVED : ReviewStatus.NOT_APPROVED);
             //url;
-            loan.setDescription((String)loans.get("ListingStatusDescription"));
+            loan.setDescription((String) loans.get("ListingStatusDescription"));
             //purpose;
-            loan.setTitle((String)loans.get("ListingTitle"));
-            loan.setAddrCity((String)loans.get("BorrowerCity"));
-            loan.setAddrState((String)loans.get("BorrowerState"));
+            loan.setTitle((String) loans.get("ListingTitle"));
+            loan.setAddrCity((String) loans.get("BorrowerCity"));
+            loan.setAddrState((String) loans.get("BorrowerState"));
             //msa;
             //investorCount;
             //ilsExpD;
@@ -314,25 +147,191 @@ public class ProsperApi implements OriginatorApi
 
     }
 
+    private final String prosperUsr_;
+    private final String prosperPasswd_;
+
+    public ProsperApi() throws IOException {
+        prosperUsr_ = ApplicationProperties.getInstance().getProperty("PROSPER_USR");
+        prosperPasswd_ = ApplicationProperties.getInstance().getProperty("PROSPER_PASSWD");
+    }
+
+    @Override
+    public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders) {
+        List<OrderConfirmation> orderConfirmations = new ArrayList<OrderConfirmation>(orders.size());
+
+        for (Order order : orders) {
+            try {
+                Request request = prepareRequest(Type.ACCOUNT_POST);
+                String jsonString = createJsonRequestString(order);
+                request.bodyString(jsonString, ContentType.APPLICATION_JSON);
+                //request.setHeader("listingId",""+order.getLoanId());
+                //request.setHeader("amount",""+order.getRequestedAmount());
+
+                Response response = request.execute();
+                HttpResponse httpResponse = response.returnResponse();
+                String responseStr = EntityUtils.toString(httpResponse.getEntity());
+                Map<String,Object> orderConfirmationsMap = new ObjectMapper().readValue(responseStr, HashMap.class);
+
+                if (orderConfirmationsMap != null) {
+                    OrderConfirmation orderConfirmation = new OrderConfirmation();
+                    orderConfirmation.setLoanId(Long.valueOf((String) orderConfirmationsMap.get("ListingId")));
+                    orderConfirmation.setRequestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("RequestedAmount")));
+                    orderConfirmation.setInvestedAmount(Double.parseDouble((String)orderConfirmationsMap.get("AmountInvested")));
+                    String status = (String) orderConfirmationsMap.get("State");
+                    {
+                        orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(status));
+                    }
+
+                    orderConfirmations.add(orderConfirmation);
+                } else {
+                    throw new RuntimeException("Invalid message:" + orderConfirmationsMap );
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        OrderInstructConfirmation orderInstructConfirmation = new OrderInstructConfirmation();
+        orderInstructConfirmation.getOrderConfirmations().addAll(orderConfirmations);
+
+        logger_.trace("Returning ["+orderConfirmations.size()+"] orderInstructConfirmation records");
+        return orderInstructConfirmation;
+    }
+
+    private String createJsonRequestString(Order order) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"listingId\": ").append(order.getLoanId()).append(',');
+        sb.append("\"amount\": ").append(order.getRequestedAmount())
+                .append("}");
+        return sb.toString();
+
+    }
+
+    @Override
+    public Collection<OwnedNote> getNotesOwned() {
+        List<Map<String,Object>> map;
+        try {
+            map = toMap(new JSONArray(prepareRequest(Type.NOTES).execute().returnContent().asString()));
+            return convertNotesOwned(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception {
+        List<Map<String, Object>> map;
+        try {
+            map = toMap(new JSONArray(prepareRequest(Type.LOANS).execute().returnContent().asString()));
+            return convertLoans(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Set<Long> getAllInvestedLoans() throws IOException {
+        throw new UnsupportedOperationException("Not completed yet");
+    }
+
+    private static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
+        List<Map<String, Object>> ret = new LinkedList<Map<String, Object>>();
+        for (int i = 0 ; i < object.length() ; i++) {
+            ret.add(toMap((JSONObject) object.get(i)));
+        }
+
+        return ret;
+    }
+
+    private static Map<String, Object> toMap(JSONObject object) throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Iterator<String> keysItr = object.keys();
+        while(keysItr.hasNext()) {
+            String key = keysItr.next();
+            Object value = object.get(key);
+
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            } else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    private static List<Object> toList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for(int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            } else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
+    }
+
+    private Collection<OwnedNote> convertNotesOwned(List<Map<String, Object>> allNotesOwned) throws ParseException {
+        //throw new UnsupportedOperationException();
+
+        Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
+        for (Map<String,Object>  noteOwned : allNotesOwned) {
+            OwnedNote ownedNote = new OwnedNote();
+            {
+                ownedNote.setLoanStatus((String)noteOwned.get("NoteStatusDescription"));
+                ownedNote.setLoanId((Integer)noteOwned.get("ListingNumber"));
+                ownedNote.setNoteId((String)noteOwned.get("LoanNoteID"));
+                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("ProsperRating").equals("AA")?"A":(String)noteOwned.get("ProsperRating")));
+                ownedNote.setLoanAmount((Double)noteOwned.get("TotalAmountBorrowed"));
+                //ownedNote.setNoteAmount(Double.valueOf(noteOwned.get("noteAmount")));
+                ownedNote.setInterestRate((Double)noteOwned.get("BorrowerRate"));
+                //ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId")));
+                ownedNote.setTerm((Integer)noteOwned.get("Term"));
+                ownedNote.setIssueDate(DateValueOf((String)noteOwned.get("OriginationDate")));
+                //ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
+                //ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
+                ownedNote.setPaymentsReceived((Double) noteOwned.get("PrincipalRepaid"));
+            }
+
+            ret.add(ownedNote);
+        }
+
+        return ret;
+    }
+
+    protected Request prepareRequest(Type type) throws UnsupportedEncodingException {
+        Request request;
+        if (type == Type.ACCOUNT_POST) {
+            request = Request.Post(getUrl(type));
+        } else {
+            request = Request.Get(getUrl(type));
+        }
+        request.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary((prosperUsr_ + ":" + prosperPasswd_).getBytes(StandardCharsets.UTF_8)));
+        return request;
+    }
+
     private final static Date DateValueOf(String value) throws ParseException {
 
-        if ("null".equals(value) )
+        if ("null".equals(value))
             return null;
         else {
             try {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                 return formatter.parse(value);
-            }
-            catch(ParseException ex)
-            {
+            } catch(ParseException ex) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 return formatter.parse(value);
             }
         }
     }
+
     @Override
-    public Map<String,Long> orderGetPortfolios()
-    {
+    public Map<String,Long> orderGetPortfolios() {
         throw new UnsupportedOperationException();
         /*
         try {
@@ -364,31 +363,18 @@ public class ProsperApi implements OriginatorApi
         String url = BASE_URL;
         if (type == Type.LOANS) {
             url += "Listings";
-        }
-        else if (type == Type.NOTES)
-        {
+        } else if (type == Type.NOTES) {
             url+="Notes";
+        } else if(type == Type.ACCOUNT_POST) {
+            url += "invest";
+        } else {
+            throw new IllegalArgumentException("Unknown type [" + type + "]");
         }
-        else if(type == Type.ACCOUNT_POST)
-        {
-            url+="invest";
-        }
-        else
-        {
-            throw new IllegalArgumentException("Unknown type ["+type+"]");
-        }
-        return url ;
+        return url;
     }
 
-    protected Request prepareRequest(Type type) throws UnsupportedEncodingException {
-        Request request;
-        if (type == Type.ACCOUNT_POST) {
-            request = Request.Post(getUrl(type));
-        } else {
-            request = Request.Get(getUrl(type));
-        }
-        request.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary((prosperUsr_+ ":" + prosperPasswd_).getBytes("UTF-8")));
-        return request;
+    private enum Type {
+        ACCOUNT, LOANS, ACCOUNT_POST, NOTES
     }
 
     public static void main(String[] args) throws Exception {
