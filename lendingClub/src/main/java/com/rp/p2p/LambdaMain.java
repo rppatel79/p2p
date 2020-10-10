@@ -1,10 +1,9 @@
 package com.rp.p2p;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.rp.util.exception.ExceptionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,15 +16,15 @@ import java.util.stream.Collectors;
 
 public class LambdaMain implements RequestHandler<Object, Object>
 {
-    static final Logger log = LoggerFactory.getLogger(LambdaMain.class);
+    public Object handleRequest(final Object input, final Context context) {
+        LambdaLogger log = context.getLogger();
 
-    public Object handleRequest(final Object input, final Context context)
-    {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("X-Custom-Header", "application/json");
 
         try {
+            log.log("Running with input [" + input + "]");
             String[] params = new String[]{Main.SourceType.filterSource.toString(), Double.valueOf(0.0).toString()};
             Main.main(params);
 
@@ -35,7 +34,7 @@ public class LambdaMain implements RequestHandler<Object, Object>
         }
         catch(Exception ex)
         {
-            log.error("Able to complete",ex);
+            log.log("Able to complete." + ExceptionUtils.getStackTrace(ex));
 
             return new GatewayResponse("{}", headers, 500);
         }
