@@ -1,3 +1,5 @@
+package com.rp.p2p.util;
+
 import com.rp.p2p.Main;
 import com.rp.p2p.model.LoanListing;
 import com.rp.p2p.model.OrderConfirmation;
@@ -19,8 +21,7 @@ public class EmailHelper
         StringBuilder msg = new StringBuilder();
         msg.append("<HTML><body>");
 
-        if (orderStatus.getSuccess().size() > 0)
-        {
+        if (orderStatus.getSuccess().size() > 0) {
             StringBuilder successTableBuilder = buildTable(orderStatus.getSuccess(), true);
             msg.append(successTableBuilder);
         }
@@ -46,8 +47,7 @@ public class EmailHelper
         builder.append("<TH>Grade</TH>");
         builder.append("<TH>Rate</TH>");
         builder.append("</TD>");
-        for (OrderConfirmation confirmation : orderConfirmation)
-        {
+        for (OrderConfirmation confirmation : orderConfirmation) {
             builder.append("<TD>");
             builder.append("<TR>").append(confirmation.getLoanId()).append("</TR>");
             builder.append("<TR>").append(confirmation.getInvestedAmount()).append("</TR>");
