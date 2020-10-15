@@ -24,8 +24,7 @@ public class LendingClubApi implements OriginatorApi
     private  static final String BASE_URL = "https://api.lendingclub.com/api/investor/v1/";
 
     public LendingClubApi() throws IOException {
-        String LENDING_CLUB_API = ApplicationPropertiesFactory.getInstance().getProperty("LENDING_CLUB_API");
-        String LENDINGCLUB_API_KEY = LENDING_CLUB_API;
+        String LENDINGCLUB_API_KEY = ApplicationPropertiesFactory.getInstance().getProperty("LENDING_CLUB_API");
         long INVESTOR_ID = Long.parseLong(ApplicationPropertiesFactory.getInstance().getProperty("INVESTOR_ID"));
 
         investorId = ("" + INVESTOR_ID).toCharArray();
@@ -35,54 +34,17 @@ public class LendingClubApi implements OriginatorApi
     private final char[] investorId;
     private final char[] apiKey;
 
-    @Override
-    public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders) {
-        Request request = prepareRequest("orders", Type.ACCOUNT_POST);
-        String jsonString = createJsonRequestString(orders);
-        request.bodyString(jsonString, ContentType.DEFAULT_TEXT);
-//        JsonParserFactory factory = JsonParserFactory.getInstance();
-//        JSONParser parser = factory.newJsonParser();
-
-
-        try {
-            Response response = request.execute();
-            HttpResponse httpResponse = response.returnResponse();
-            String responseStr = EntityUtils.toString(httpResponse.getEntity());
-//            Map d = parser.parseJson(responseStr);
-            Map<String,Object> d =
-                    new ObjectMapper().readValue(responseStr, HashMap.class);
-
-            List<String> errors = (List<String>)d.get("errors");
-            List<Map<String,Object>> orderConfirmationsMap = (List<Map<String,Object>>)d.get("orderConfirmations");
-            if (orderConfirmationsMap != null) {
-                List<OrderConfirmation> orderConfirmations = new ArrayList<OrderConfirmation>(orderConfirmationsMap.size());
-                for (Map<String, Object> record : orderConfirmationsMap) {
-                    OrderConfirmation orderConfirmation = new OrderConfirmation();
-                    orderConfirmation.setLoanId((Integer)record.get("loanId"));
-                    orderConfirmation.setRequestedAmount(Double.valueOf((Double) record.get("requestedAmount")));
-                    orderConfirmation.setInvestedAmount(Double.valueOf((Double) record.get("investedAmount")));
-                    List<String> executionStatus = (List<String>) record.get("executionStatus");
-                    for (String value : executionStatus) {
-                        orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(value));
-                    }
-
-                    orderConfirmations.add(orderConfirmation);
-                }
-
-                OrderInstructConfirmation orderInstructConfirmation = new OrderInstructConfirmation();
-                orderInstructConfirmation.getOrderConfirmations().addAll(orderConfirmations);
-
-                return orderInstructConfirmation;
+    private static Date DateValueOf(String value) {
+        if (value == null || "null".equals(value))
+            return null;
+        else {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                return formatter.parse(value);
+            } catch (ParseException ex) {
+                logger_.warn("Unable to parse date.  Returning null and continuing", ex);
+                return null;
             }
-            else if(errors != null)
-            {
-                List<String> errorList = errors;
-                throw new RuntimeException(errorList+"");
-            } else {
-                throw new RuntimeException("Invalid message:" + d);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -137,65 +99,28 @@ public class LendingClubApi implements OriginatorApi
         }
     }
 
-    @Override
-    public BrowseLoansResult getBrowseLoansResult(boolean allLoans) throws Exception {
-//        JsonParserFactory factory = JsonParserFactory.getInstance();
-//        JSONParser parser = factory.newJsonParser();
-        Map map;
-        try {
-            InputStream jsonString = prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream();
-//            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
-            map = new ObjectMapper().readValue(jsonString, HashMap.class);
-
-//            if (!map.containsKey("loans")) {
-//                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
-//            }
-            List<Map<String, ?>> loansMap = (List<Map<String, ?>>) map.get("loans");
-            if (loansMap == null) {
-                logger_.warn("Made RESTful request but did not get any results.");
-                return new BrowseLoansResult();//return an empty shell
-            }
-            else
-                return convertLoans(loansMap);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    private static Date DateValueOf(Object value) {
+        if (value == null)
+            return null;
+        else {
+            return DateValueOf(value.toString());
         }
     }
 
-    private Collection<OwnedNote> convertNotesOwned(List<Map<String, ?>> allNotesOwned) throws ParseException {
-        Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
-        for (Map<String,?>  noteOwned : allNotesOwned)
-        {
-            OwnedNote ownedNote = new OwnedNote();
-            {
-                ownedNote.setLoanStatus(StringValueOf(noteOwned.get("loanStatus")));
-                ownedNote.setLoanId(Long.valueOf(noteOwned.get("loanId").toString()));
-                ownedNote.setNoteId(StringValueOf(noteOwned.get("noteId")));
-                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade").toString()));
-                ownedNote.setLoanAmount(DoubleValueOf(noteOwned.get("loanAmount")));
-                ownedNote.setNoteAmount(DoubleValueOf(noteOwned.get("noteAmount")));
-                ownedNote.setInterestRate(DoubleValueOf(noteOwned.get("interestRate")));
-                ownedNote.setOrderId(Long.valueOf(noteOwned.get("orderId").toString()));
-                ownedNote.setTerm(IntegerValueOf(noteOwned.get("loanLength")));
-                ownedNote.setIssueDate(DateValueOf(noteOwned.get("issueDate")));
-                ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
-                ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
-                ownedNote.setPaymentsReceived(DoubleValueOf(noteOwned.get("paymentsReceived")));
-            }
-
-            ret.add(ownedNote);
+    private static String StringValueOf(String value) {
+        if (value == null || "null".equals(value) || value.isEmpty() || "N/A".equalsIgnoreCase(value))
+            return null;
+        else {
+            return value;
         }
-
-        return ret;
     }
 
     private BrowseLoansResult convertLoans(List<Map<String, ?>> allLoans) {
         BrowseLoansResult browseLoansResult = new BrowseLoansResult();
-        for (Map<String,?>  loans : allLoans)
-        {
+        for (Map<String, ?> loans : allLoans) {
             LoanListing loan = new LoanListing();
 
-            loan.setId((Integer)loans.get("id"));
+            loan.setId((Integer) loans.get("id"));
             loan.setMemberId(StringValueOf(loans.get("memberId")));
 
             loan.setLoanAmnt((Double)loans.get("loanAmount"));
@@ -291,71 +216,134 @@ public class LendingClubApi implements OriginatorApi
         return browseLoansResult;
     }
 
-    private final static Date DateValueOf(String value) {
-        if (value == null || "null".equals(value) )
-            return null;
-        else {
-            try {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-                return formatter.parse(value);
-            }
-            catch(ParseException ex)
-            {
-                logger_.warn("Unable to parse date.  Returning null and continuing",ex);
-                return null;
-            }
-        }
-    }
-
-    private final static Date DateValueOf(Object value) {
-        if (value == null )
-            return null;
-        else {
-            return DateValueOf(value.toString());
-        }
-    }
-
-
-    private final static String StringValueOf(String value){
-        if (value == null || "null".equals(value) || value.isEmpty() || "N/A".equalsIgnoreCase(value))
-            return null;
-        else {
-            return value;
-        }
-    }
-
-    private final static String StringValueOf(Object value){
-        if (value == null )
+    private static String StringValueOf(Object value) {
+        if (value == null)
             return null;
         else {
             return StringValueOf(value.toString());
         }
     }
 
-
-    private final static Integer IntegerValueOf(String investorCount) {
+    private static Integer IntegerValueOf(String investorCount) {
         //if (investorCount == null)return null;
         return "null".equals(investorCount) ? null : Integer.valueOf(investorCount);
     }
 
-    private final static Integer IntegerValueOf(Object investorCount) {
-        if (investorCount == null)return null;
+    private static Integer IntegerValueOf(Object investorCount) {
+        if (investorCount == null) return null;
         return IntegerValueOf(investorCount.toString());
     }
 
-
-    private final static Double DoubleValueOf(String investorCount) {
+    private static Double DoubleValueOf(String investorCount) {
         //if (investorCount == null)return null;
         return "null".equals(investorCount) ? null : Double.valueOf(investorCount);
     }
 
-    private final static Double DoubleValueOf(Object investorCount) {
-        if (investorCount == null)return null;
+    private static Double DoubleValueOf(Object investorCount) {
+        if (investorCount == null) return null;
         return DoubleValueOf(investorCount.toString());
     }
+
     @Override
-    public Map<String,Long> orderGetPortfolios()
-    {
+    public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders) {
+        Request request = prepareRequest("orders", Type.ACCOUNT_POST);
+        String jsonString = createJsonRequestString(orders);
+        request.bodyString(jsonString, ContentType.DEFAULT_TEXT);
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
+
+
+        try {
+            Response response = request.execute();
+            HttpResponse httpResponse = response.returnResponse();
+            String responseStr = EntityUtils.toString(httpResponse.getEntity());
+
+            Map<String, Object> responseMap =
+                    new ObjectMapper().readValue(responseStr, HashMap.class);
+
+            List<String> errors = (List<String>) responseMap.get("errors");
+            List<Map<String, Object>> orderConfirmationsMap = (List<Map<String, Object>>) responseMap.get("orderConfirmations");
+            if (orderConfirmationsMap != null) {
+                List<OrderConfirmation> orderConfirmations = new ArrayList<>(orderConfirmationsMap.size());
+                for (Map<String, Object> record : orderConfirmationsMap) {
+                    OrderConfirmation orderConfirmation = new OrderConfirmation();
+                    orderConfirmation.setLoanId((Integer) record.get("loanId"));
+                    orderConfirmation.setRequestedAmount((Double) record.get("requestedAmount"));
+                    orderConfirmation.setInvestedAmount((Double) record.get("investedAmount"));
+                    List<String> executionStatus = (List<String>) record.get("executionStatus");
+                    for (String value : executionStatus) {
+                        orderConfirmation.getExecutionStatus().add(OrderExecutionStatus.fromValue(value));
+                    }
+
+                    orderConfirmations.add(orderConfirmation);
+                }
+
+                OrderInstructConfirmation orderInstructConfirmation = new OrderInstructConfirmation();
+                orderInstructConfirmation.getOrderConfirmations().addAll(orderConfirmations);
+
+                return orderInstructConfirmation;
+            } else if (errors != null) {
+                throw new RuntimeException(errors + "");
+            } else {
+                throw new RuntimeException("Invalid message:" + responseMap);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public BrowseLoansResult getBrowseLoansResult(boolean allLoans) {
+//        JsonParserFactory factory = JsonParserFactory.getInstance();
+//        JSONParser parser = factory.newJsonParser();
+        Map map;
+        try {
+            InputStream jsonString = prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream();
+//            map = parser.parseJson(prepareRequest("listing" + (allLoans ? "?showAll=true" : ""), Type.LOANS).execute().returnContent().asStream(), "UTF-8");
+            map = new ObjectMapper().readValue(jsonString, HashMap.class);
+
+//            if (!map.containsKey("loans")) {
+//                log.error("Response doesn't have any 'loans' attribute, response string: " + map);
+//            }
+            List<Map<String, ?>> loansMap = (List<Map<String, ?>>) map.get("loans");
+            if (loansMap == null) {
+                logger_.warn("Made RESTful request but did not get any results.");
+                return new BrowseLoansResult();//return an empty shell
+            } else
+                return convertLoans(loansMap);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Collection<OwnedNote> convertNotesOwned(List<Map<String, ?>> allNotesOwned) throws ParseException {
+        Collection<OwnedNote> ret = new ArrayList<OwnedNote>(allNotesOwned.size());
+        for (Map<String, ?> noteOwned : allNotesOwned) {
+            OwnedNote ownedNote = new OwnedNote();
+            {
+                ownedNote.setLoanStatus(StringValueOf(noteOwned.get("loanStatus")));
+                ownedNote.setLoanId(Long.parseLong(noteOwned.get("loanId").toString()));
+                ownedNote.setNoteId(StringValueOf(noteOwned.get("noteId")));
+                ownedNote.setGrade(LoanGrade.valueOf(noteOwned.get("grade").toString()));
+                ownedNote.setLoanAmount(DoubleValueOf(noteOwned.get("loanAmount")));
+                ownedNote.setNoteAmount(DoubleValueOf(noteOwned.get("noteAmount")));
+                ownedNote.setInterestRate(DoubleValueOf(noteOwned.get("interestRate")));
+                ownedNote.setOrderId(Long.parseLong(noteOwned.get("orderId").toString()));
+                ownedNote.setTerm(IntegerValueOf(noteOwned.get("loanLength")));
+                ownedNote.setIssueDate(DateValueOf(noteOwned.get("issueDate")));
+                ownedNote.setOrderDate(DateValueOf(noteOwned.get("orderDate")));
+                ownedNote.setLoanStatusDate(DateValueOf(noteOwned.get("loanStatusDate")));
+                ownedNote.setPaymentsReceived(DoubleValueOf(noteOwned.get("paymentsReceived")));
+            }
+
+            ret.add(ownedNote);
+        }
+
+        return ret;
+    }
+
+    @Override
+    public Map<String, Long> orderGetPortfolios() {
         try {
             Request req = prepareRequest("portfolios", Type.ACCOUNT);
 //            JsonParserFactory factory = JsonParserFactory.getInstance();
@@ -364,7 +352,7 @@ public class LendingClubApi implements OriginatorApi
             Map map = new ObjectMapper().readValue(executeWithRetry(req), HashMap.class);
 
             List<Map> portfoliosList = (List<Map>) map.get("myPortfolios");
-            Map<String, Long> ret = new HashMap<String, Long>();
+            Map<String, Long> ret = new HashMap<>();
             for (int i = 0, size = portfoliosList.size(); i < size; i++) {
                 Map mapPortfolio = portfoliosList.get(i);
                 long id = Long.parseLong((String) mapPortfolio.get("portfolioId"));
@@ -432,7 +420,7 @@ public class LendingClubApi implements OriginatorApi
     {
         LendingClubApi lendingClubApi = new LendingClubApi();
         Collection<OwnedNote> allOwnedNotes = lendingClubApi.getNotesOwned();
-        Set<Long> ret = new HashSet<Long>();
+        Set<Long> ret = new HashSet<>();
         for (OwnedNote note : allOwnedNotes)
         {
             ret.add(note.getLoanId());
