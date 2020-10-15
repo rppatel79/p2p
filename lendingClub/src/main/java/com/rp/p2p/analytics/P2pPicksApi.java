@@ -1,8 +1,9 @@
 package com.rp.p2p.analytics;
 
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -10,7 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class P2pPicksApi
 {
@@ -20,10 +24,9 @@ public class P2pPicksApi
     private final String apiSecret_;
     private final String apiKey_;
 
-    public P2pPicksApi() throws IOException
-    {
-        apiSecret_ =ApplicationProperties.getInstance().getProperty("P2P_PICKS_API_SECRET");
-        apiKey_ =ApplicationProperties.getInstance().getProperty("P2P_PICKS_API_KEY");
+    public P2pPicksApi() throws IOException {
+        apiSecret_ = ApplicationPropertiesFactory.getInstance().getProperty("P2P_PICKS_API_SECRET");
+        apiKey_ = ApplicationPropertiesFactory.getInstance().getProperty("P2P_PICKS_API_KEY");
     }
 
     public PicksResponse list(String sid,String product) throws Exception
@@ -135,8 +138,7 @@ public class P2pPicksApi
         public String top;
     }
 
-    public static void main(String args[]) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         (new P2pPicksApi()).list(null, "profit-maximizer");
 
 /*

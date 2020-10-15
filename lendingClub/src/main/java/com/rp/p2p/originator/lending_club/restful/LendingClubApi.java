@@ -3,7 +3,7 @@ package com.rp.p2p.originator.lending_club.restful;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
@@ -23,25 +23,20 @@ public class LendingClubApi implements OriginatorApi
 
     private  static final String BASE_URL = "https://api.lendingclub.com/api/investor/v1/";
 
-    private static enum Type {
-        ACCOUNT, LOANS, ACCOUNT_POST, NOTES
-    };
+    public LendingClubApi() throws IOException {
+        String LENDING_CLUB_API = ApplicationPropertiesFactory.getInstance().getProperty("LENDING_CLUB_API");
+        String LENDINGCLUB_API_KEY = LENDING_CLUB_API;
+        long INVESTOR_ID = Long.parseLong(ApplicationPropertiesFactory.getInstance().getProperty("INVESTOR_ID"));
+
+        investorId = ("" + INVESTOR_ID).toCharArray();
+        apiKey = LENDINGCLUB_API_KEY.toCharArray();
+    }
 
     private final char[] investorId;
     private final char[] apiKey;
 
-    public LendingClubApi() throws IOException {
-        String LENDING_CLUB_API = ApplicationProperties.getInstance().getProperty("LENDING_CLUB_API");
-        String LENDINGCLUB_API_KEY = LENDING_CLUB_API;
-        long INVESTOR_ID=Long.parseLong(ApplicationProperties.getInstance().getProperty("INVESTOR_ID"));
-
-        investorId= (""+ INVESTOR_ID ).toCharArray();
-        apiKey= LENDINGCLUB_API_KEY.toCharArray();
-    }
-
     @Override
-    public OrderInstructConfirmation  orderSubmitOrders(Collection<Order> orders)
-    {
+    public OrderInstructConfirmation orderSubmitOrders(Collection<Order> orders) {
         Request request = prepareRequest("orders", Type.ACCOUNT_POST);
         String jsonString = createJsonRequestString(orders);
         request.bodyString(jsonString, ContentType.DEFAULT_TEXT);
@@ -81,22 +76,24 @@ public class LendingClubApi implements OriginatorApi
             }
             else if(errors != null)
             {
-                List<String> errorList = (List<String>)errors;
+                List<String> errorList = errors;
                 throw new RuntimeException(errorList+"");
-            }
-            else
-            {
-                throw new RuntimeException("Invalid message:"+d);
+            } else {
+                throw new RuntimeException("Invalid message:" + d);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String createJsonRequestString(Collection<Order> orders)
-    {
+    private enum Type {
+        ACCOUNT, LOANS, ACCOUNT_POST, NOTES
+    }
+
+    private String createJsonRequestString(Collection<Order> orders) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");sb.append("\"aid\": ");
+        sb.append("{");
+        sb.append("\"aid\": ");
         sb.append(new String(investorId()));
         sb.append(",");
         sb.append("\"orders\":[");

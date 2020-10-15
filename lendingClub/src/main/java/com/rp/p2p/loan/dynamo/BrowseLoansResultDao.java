@@ -5,7 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.rp.p2p.model.BrowseLoansResult;
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -15,8 +15,8 @@ public class BrowseLoansResultDao implements com.rp.p2p.loan.BrowseLoansResultDa
 
     private final AWSCredentials credentials_;
     public BrowseLoansResultDao() throws IOException {
-        credentials_= new BasicAWSCredentials(ApplicationProperties.getInstance().getProperty("aws.access_key_id"),
-                ApplicationProperties.getInstance().getProperty("aws.secret_access_key"));
+        credentials_ = new BasicAWSCredentials(ApplicationPropertiesFactory.getInstance().getProperty("access_key_id"),
+                ApplicationPropertiesFactory.getInstance().getProperty("secret_access_key"));
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.rp.p2p.Main;
 import com.rp.p2p.model.LoanListing;
 import com.rp.p2p.model.OrderConfirmation;
 import com.rp.p2p.order_executor.OrderExecutor;
-import com.rp.util.ApplicationProperties;
 import com.rp.util.Mailer;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class EmailHelper
         }
         msg.append("</body></HTML>");
 
-        Mailer.getDefaultMailer().sendMessage(Collections.singleton(ApplicationProperties.getInstance().getProperty("EMAIL_TO")),subject,msg.toString());
+        Mailer.getDefaultMailer().sendMessage(Collections.singleton(ApplicationPropertiesFactory.getInstance().getProperty("EMAIL_TO")), subject, msg.toString());
     }
 
     private static StringBuilder buildTable(Set<OrderConfirmation> orderConfirmation, boolean isSuccessList) {

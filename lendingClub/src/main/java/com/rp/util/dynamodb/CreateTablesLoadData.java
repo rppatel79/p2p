@@ -5,7 +5,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
+
 import java.util.ArrayList;
 
 public class CreateTablesLoadData
@@ -14,8 +15,8 @@ public class CreateTablesLoadData
 
     public static void main(String[] args) throws Exception {
         DynamoDB dynamoDB = new DynamoDB(new AmazonDynamoDBClient(
-                new BasicAWSCredentials(ApplicationProperties.getInstance().getProperty("aws.access_key_id"),
-                        ApplicationProperties.getInstance().getProperty("aws.secret_access_key"))));
+                new BasicAWSCredentials(ApplicationPropertiesFactory.getInstance().getProperty("access_key_id"),
+                        ApplicationPropertiesFactory.getInstance().getProperty("secret_access_key"))));
 
         try {
 

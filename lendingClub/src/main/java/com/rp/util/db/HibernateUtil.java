@@ -1,11 +1,14 @@
 package com.rp.util.db;
 
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -17,10 +20,10 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory(String db) {
         try {
             Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.driver_class","com.mysql.jdbc.Driver");
-            configuration.setProperty("hibernate.connection.url",DbFactory.getInstance().getUrlWithoutCredentials(db));
-            configuration.setProperty("hibernate.connection.username",ApplicationProperties.getInstance().getProperty(db+".RDS_USERNAME"));
-            configuration.setProperty("hibernate.connection.password",ApplicationProperties.getInstance().getProperty(db+".RDS_PASSWORD"));
+            configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+            configuration.setProperty("hibernate.connection.url", DbFactory.getInstance().getUrlWithoutCredentials(db));
+            configuration.setProperty("hibernate.connection.username", ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_USERNAME"));
+            configuration.setProperty("hibernate.connection.password", ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_PASSWORD"));
             // Create the SessionFactory from hibernate.cfg.xml
             return configuration.configure().
                     buildSessionFactory();
@@ -94,8 +97,7 @@ public class HibernateUtil {
         return ret;
     }
 
-    public static final void main(String args[])
-    {
+    public static final void main(String[] args) {
         DbId db = DbId.P2P;
 
         {

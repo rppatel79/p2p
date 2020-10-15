@@ -1,15 +1,19 @@
 package com.rp.util;
 
-import java.io.IOException;
-import java.util.*;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
+
 import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
 
 public class Mailer {
-
     private static final Properties DEFAULT_PROPERTIES = new Properties();
-    static
-    {
+
+    static {
         DEFAULT_PROPERTIES.put("mail.smtp.host", "smtp.gmail.com");
         DEFAULT_PROPERTIES.put("mail.smtp.auth", "true");
         DEFAULT_PROPERTIES.put("mail.debug", "true");
@@ -17,14 +21,16 @@ public class Mailer {
         DEFAULT_PROPERTIES.put("mail.smtp.socketFactory.port", 25);
         DEFAULT_PROPERTIES.put("mail.smtp.starttls.enable", "true");
         DEFAULT_PROPERTIES.put("mail.transport.protocol", "smtp");
-
     }
 
     public static Mailer getDefaultMailer() throws IOException {
         Mailer mailer = new Mailer();
-        mailer.setPassword(ApplicationProperties.getInstance().getProperty("EMAIL_PASSWORD"));
-        mailer.setUsername(ApplicationProperties.getInstance().getProperty("EMAIL_USERNAME"));
-        mailer.setSessionProperties(ApplicationProperties.getInstance().getProperties("mail.*"));
+        mailer.setPassword(ApplicationPropertiesFactory.getInstance().getProperty("EMAIL_PASSWORD"));
+        mailer.setUsername(ApplicationPropertiesFactory.getInstance().getProperty("EMAIL_USERNAME"));
+
+        Properties properties = new Properties();
+        properties.putAll(ApplicationPropertiesFactory.getInstance().getProperties("mail.*"));
+        mailer.setSessionProperties(properties);
 
         return mailer;
     }
@@ -46,9 +52,15 @@ public class Mailer {
         password_ = password;
     }
 
-    public void sendMessage(Collection<String> toAddress, String subject,String body) throws MessagingException {
+    public static void main(String[] args) throws Exception {
+        Mailer mailer = Mailer.getDefaultMailer();
 
-        Session mailSession = null;
+        mailer.sendMessage(Collections.singleton(ApplicationPropertiesFactory.getInstance().getProperty("EMAIL_TO")), "MySubject", "MyBody");
+    }
+
+    public void sendMessage(Collection<String> toAddress, String subject, String body) throws MessagingException {
+
+        Session mailSession;
 
         mailSession = Session.getInstance(properties_,
                 new Authenticator() {
@@ -71,12 +83,5 @@ public class Mailer {
 
         transport.sendMessage(message,message.getRecipients(Message.RecipientType.TO));
         transport.close();
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        Mailer mailer = Mailer.getDefaultMailer();
-
-        mailer.sendMessage(Collections.singleton(ApplicationProperties.getInstance().getProperty("EMAIL_TO")),"MySubject","MyBody");
     }
 }

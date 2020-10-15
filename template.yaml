@@ -9,7 +9,8 @@ Globals:
   Function:
     Timeout: 200
     MemorySize: 2048
-
+#    Environment:
+#      Variables:
 Resources:
   lendingClub:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -17,9 +18,35 @@ Resources:
       CodeUri: lendingClub
       Handler: com.rp.p2p.LambdaMain::handleRequest
       Runtime: java11
-      #Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-      #  Variables:
-      #    PARAM1: VALUE
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          LENDING_CLUB_API: '{{resolve:ssm:LENDING_CLUB_API:1}}'
+          INVESTOR_ID: '{{resolve:ssm:INVESTOR_ID:1}}'
+
+          EMAIL_USERNAME: '{{resolve:ssm:EMAIL_USERNAME:1}}'
+          EMAIL_PASSWORD: '{{resolve:ssm:EMAIL_PASSWORD:1}}'
+          EMAIL_TO: '{{resolve:ssm:EMAIL_TO:1}}'
+
+          mail_smtp_host: '{{resolve:ssm:mail.smtp.host:1}}'
+          mail_smtp_auth: '{{resolve:ssm:mail.smtp.auth:1}}'
+          mail_debug: '{{resolve:ssm:mail.debug:1}}'
+          mail_smtp_port: '{{resolve:ssm:mail.smtp.port:1}}'
+          mail_smtp_socketFactory_port: '{{resolve:ssm:mail.smtp.socketFactory.port:1}}'
+          mail_smtp_starttls_enable: '{{resolve:ssm:mail.smtp.starttls.enable:1}}'
+          mail_transport_protocol: '{{resolve:ssm:mail.transport.protocol:1}}'
+
+          P2P_PICKS_API_SECRET: '{{resolve:ssm:P2P_PICKS_API_SECRET:1}}'
+          P2P_PICKS_API_KEY: '{{resolve:ssm:P2P_PICKS_API_KEY:1}}'
+
+          P2P_RDS_DB_NAME: '{{resolve:ssm:P2P.RDS_DB_NAME:1}}'
+          P2P_RDS_USERNAME: '{{resolve:ssm:P2P.RDS_USERNAME:1}}'
+          P2P_RDS_PASSWORD: '{{resolve:ssm:P2P.RDS_PASSWORD:1}}'
+          P2P_RDS_HOSTNAME: '{{resolve:ssm:P2P.RDS_HOSTNAME:1}}'
+          P2P_RDS_PORT: '{{resolve:ssm:P2P.RDS_PORT:1}}'
+          P2P_RDS_CLASS: '{{resolve:ssm:P2P.RDS_CLASS:1}}'
+
+          access_key_id: '{{resolve:ssm:access_key_id:1}}'
+          secret_access_key: '{{resolve:ssm:secret_access_key:1}}'
       Events:
         P2PEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -34,9 +61,3 @@ Outputs:
   P2PApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/P2PEvent/"
-  HelloWorldFunction:
-    Description: "P2P Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for P2P Lambda function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn

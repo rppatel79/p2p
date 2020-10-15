@@ -1,7 +1,7 @@
 package com.rp.util.db;
 
 
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -25,25 +25,25 @@ public class DbFactory
 
     public String getUrlWithoutCredentials(String db) throws IOException {
         // Read RDS connection information from the environment
-        String dbName = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_DB_NAME");
-        String hostname = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_HOSTNAME");
-        String port = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_PORT");
-        //String driverClazz=ApplicationProperties.getInstance().getProperty(db+"."+"RDS_CLASS");
-        return "jdbc:mysql://" + hostname + ":" + port + "/" + dbName ;
+        String dbName = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_DB_NAME");
+        String hostname = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_HOSTNAME");
+        String port = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_PORT");
+        //String driverClazz=ApplicationProperties.getInstance().getProperty(db+"_"+"RDS_CLASS");
+        return "jdbc:mysql://" + hostname + ":" + port + "/" + dbName;
     }
 
     public Connection getConnection(String db)
     {
         String jdbcUrl=null;
         String driverClazz=null;
-        try{
+        try {
             // Read RDS connection information from the environment
-            String dbName = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_DB_NAME");
-            String userName = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_USERNAME");
-            String password = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_PASSWORD");
-            String hostname = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_HOSTNAME");
-            String port = ApplicationProperties.getInstance().getProperty(db+"."+"RDS_PORT");
-            driverClazz=ApplicationProperties.getInstance().getProperty(db+"."+"RDS_CLASS");
+            String dbName = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_DB_NAME");
+            String userName = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_USERNAME");
+            String password = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_PASSWORD");
+            String hostname = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_HOSTNAME");
+            String port = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_PORT");
+            driverClazz = ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_CLASS");
             jdbcUrl = "jdbc:mysql://" + hostname + ":" +
                     port + "/" + dbName + "?user=" + userName + "&password=" + password;
         } catch (IOException e) {

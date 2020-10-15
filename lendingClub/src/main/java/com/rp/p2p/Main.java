@@ -10,8 +10,8 @@ import com.rp.p2p.order_executor.lending_club.wsdl.OrderExecutor;
 import com.rp.p2p.originator.DbOriginatorApi;
 import com.rp.p2p.originator.OriginatorApi;
 import com.rp.p2p.originator.lending_club.restful.LendingClubApi;
-import com.rp.util.ApplicationProperties;
 import com.rp.util.Mailer;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import com.rp.util.db.HibernateUtil;
 import org.apache.log4j.Logger;
 
@@ -139,7 +139,7 @@ public class Main
         private final Collection<String> to_;
 
         public EmailHelper() throws IOException {
-            to_ = Collections.unmodifiableCollection(Collections.singleton(ApplicationProperties.getInstance().getProperty("EMAIL_TO")));
+            to_ = Collections.unmodifiableCollection(Collections.singleton(ApplicationPropertiesFactory.getInstance().getProperty("EMAIL_TO")));
         }
 
         private static StringBuilder buildTable(Set<OrderConfirmation> orderConfirmation, Map<Long, LoanListing> loanListingMap, boolean isSuccessList) {

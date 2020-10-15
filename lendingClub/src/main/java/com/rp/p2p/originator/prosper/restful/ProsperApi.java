@@ -5,7 +5,7 @@ package com.rp.p2p.originator.prosper.restful;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rp.p2p.model.*;
 import com.rp.p2p.originator.OriginatorApi;
-import com.rp.util.ApplicationProperties;
+import com.rp.util.application_properties.ApplicationPropertiesFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
@@ -151,8 +151,8 @@ public class ProsperApi implements OriginatorApi {
     private final String prosperPasswd_;
 
     public ProsperApi() throws IOException {
-        prosperUsr_ = ApplicationProperties.getInstance().getProperty("PROSPER_USR");
-        prosperPasswd_ = ApplicationProperties.getInstance().getProperty("PROSPER_PASSWD");
+        prosperUsr_ = ApplicationPropertiesFactory.getInstance().getProperty("PROSPER_USR");
+        prosperPasswd_ = ApplicationPropertiesFactory.getInstance().getProperty("PROSPER_PASSWD");
     }
 
     @Override
