@@ -20,7 +20,7 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory(String db) {
         try {
             Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+            configuration.setProperty("hibernate.connection.driver_class", ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_CLASS"));
             configuration.setProperty("hibernate.connection.url", DbFactory.getInstance().getUrlWithoutCredentials(db));
             configuration.setProperty("hibernate.connection.username", ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_USERNAME"));
             configuration.setProperty("hibernate.connection.password", ApplicationPropertiesFactory.getInstance().getProperty(db + "_" + "RDS_PASSWORD"));
