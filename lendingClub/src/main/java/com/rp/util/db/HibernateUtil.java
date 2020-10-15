@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class HibernateUtil {
     private final static Logger logger_ = Logger.getLogger(HibernateUtil.class);
-    private static final ConcurrentMap<String,SessionFactory> sessionFactoryMap = new ConcurrentHashMap<String, SessionFactory>();
+    private static final ConcurrentMap<String, SessionFactory> sessionFactoryMap = new ConcurrentHashMap<>();
     public enum DbId{P2P}
 
     private static SessionFactory buildSessionFactory(String db) {
@@ -30,7 +30,7 @@ public class HibernateUtil {
         }
         catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            logger_.error("Initial SessionFactory creation failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -65,23 +65,20 @@ public class HibernateUtil {
     protected void finalize() throws Throwable {
         List<String> sessionFactoryNotClosed = shutdownAll();
 
-        for (String dbId : sessionFactoryNotClosed)
-        {
-            logger_.warn("The session factory ["+dbId+"] was created but not explicitly closed.  The application should proactively close the session factory");
+        for (String dbId : sessionFactoryNotClosed) {
+            logger_.warn("The session factory [" + dbId + "] was created but not explicitly closed.  The application should proactively close the session factory");
         }
 
 
         super.finalize();
     }
 
-    public static final List<String>  shutdownAll() {
-        List<String> ret = new ArrayList<String>(sessionFactoryMap.size());
+    public static List<String> shutdownAll() {
+        List<String> ret = new ArrayList<>(sessionFactoryMap.size());
 
-        for (Map.Entry<String,SessionFactory> entry : sessionFactoryMap.entrySet())
-        {
-            SessionFactory sessionFactory= entry.getValue();
-            if (sessionFactory != null && !sessionFactory.isClosed())
-            {
+        for (Map.Entry<String, SessionFactory> entry : sessionFactoryMap.entrySet()) {
+            SessionFactory sessionFactory = entry.getValue();
+            if (sessionFactory != null && !sessionFactory.isClosed()) {
                 String dbId = entry.getKey();
                 ret.add(dbId);
 
@@ -97,7 +94,7 @@ public class HibernateUtil {
         return ret;
     }
 
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         DbId db = DbId.P2P;
 
         {
