@@ -8,15 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @see com.rp.util.application_properties.SystemApplicationProperties
+ * @deprecated This been replaced with AWS Parameter Store's System.env()
+ */
 public class FileApplicationProperties extends AbstractApplicationProperties implements ApplicationProperties {
     private static final String DEFAULT_PROPERTIES = "p2p.properties";
     private static final String VM_PROPERTIES = "properties";
-    private static final Object LOCK = new Object();
-    private static ApplicationProperties INSTANCE;
 
     private static final Logger logger_ = Logger.getLogger(ApplicationProperties.class);
     private final Properties properties_ = new Properties();
-    private final Map<String, String> propertiesMap_ = new HashMap();
+    private final Map<String, String> propertiesMap_ = new HashMap<>();
 
     protected FileApplicationProperties() throws IOException {
         String propertiesFileName = DEFAULT_PROPERTIES;
@@ -38,23 +40,18 @@ public class FileApplicationProperties extends AbstractApplicationProperties imp
 
             for (final String name : properties_.stringPropertyNames())
                 propertiesMap_.put(name, properties_.getProperty(name));
-        }
-        finally
-        {
-            if (bufferedInputStream!=null)
-            {
+        } finally {
+            if (bufferedInputStream!=null) {
                 try {
                     bufferedInputStream.close();
-                }
-                catch(IOException ex)
-                {
+                } catch(IOException ex) {
                     logger_.warn("Unable to close stream",ex);
                 }
             }
         }
     }
-    public String getProperty(String key)
-    {
+
+    public String getProperty(String key) {
         return properties_.getProperty(key);
     }
 
