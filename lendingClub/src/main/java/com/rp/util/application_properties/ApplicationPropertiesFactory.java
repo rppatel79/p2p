@@ -10,7 +10,8 @@ public class ApplicationPropertiesFactory {
         synchronized (LOCK) {
             if (INSTANCE == null) {
                 //INSTANCE = new FileApplicationProperties();
-                INSTANCE = new SystemApplicationProperties();
+                //INSTANCE = new SystemApplicationProperties();
+                INSTANCE = new AwsPropertyStoreApplicationProperty();
             }
 
             return INSTANCE;

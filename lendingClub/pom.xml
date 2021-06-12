@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.p2p.client</groupId>
-    <artifactId>p2p-java-client</artifactId>
+    <artifactId>p2p</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <spring.version>5.2.8.RELEASE</spring.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
