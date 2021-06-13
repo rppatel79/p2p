@@ -1,0 +1,22 @@
+name: "Deploy SAM Stack to Production"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - run: for d in */ ; do cd $d && npm install --no-package-lock --loglevel=error && cd .. ; done
+      - uses: r0zar/sam-deploy-action@v1.4
+        env:
+          TEMPLATE: 'template.yaml'
+          AWS_STACK_NAME: P2PServerlessStack-${{ github.actor }}
+          AWS_REGION: 'us-west-2'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
