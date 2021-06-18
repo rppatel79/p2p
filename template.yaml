@@ -30,16 +30,16 @@ Resources:
             Path: /P2PEventPath
             Method: get
 
-  LendingClubTable:
-    Type: AWS::Serverless::SimpleTable
-    Properties:
-      PrimaryKey:
-        Name: Id
-        Type: Number
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-      TableName: lendingclub_loanlisting
+#  LendingClubTable:
+#    Type: AWS::Serverless::SimpleTable
+#    Properties:
+#      PrimaryKey:
+#        Name: Id
+#        Type: Number
+#      ProvisionedThroughput:
+#        ReadCapacityUnits: 5
+#        WriteCapacityUnits: 5
+#      TableName: lendingclub_loanlisting
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
