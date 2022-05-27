@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: '10.x'
       - run: for d in */ ; do cd $d && npm install --no-package-lock --loglevel=error && cd .. ; done
+      - run: sam build
       - uses: r0zar/sam-deploy-action@v1.4
         env:
           TEMPLATE: 'template.yaml'
